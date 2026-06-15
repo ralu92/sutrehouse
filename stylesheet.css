@@ -25,13 +25,28 @@ hr{
 
 .image-row {
   display: flex;
-  gap: 10px;        
-  justify-content: center; 
+  gap: 12px;
+  justify-content: center;
   align-items: center;
-  padding: 60px;
 }
 
 .image-row img {
-  width: 600px;
+  width: 220px;
   height: auto;
+  border-radius: 10px;
+}
+
+@media (max-width: 768px) {
+  .image-row {
+    justify-content: flex-start;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    padding: 10px;
+  }
+
+  .image-row img {
+    flex: 0 0 auto;
+    scroll-snap-align: center;
+  }
 }
