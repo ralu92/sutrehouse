@@ -47,7 +47,6 @@ hr{
 .gallery {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  grid-auto-rows: 200px;
   gap: 5px;
   width: 90%;
   margin: auto;
@@ -70,7 +69,7 @@ hr{
 
 @media (max-width: 768px) {
   .gallery {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(1, 1fr);
   }
 }
 
