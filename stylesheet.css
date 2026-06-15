@@ -22,3 +22,13 @@ hr{
 
   margin: auto;
 }
+
+.image-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  img{
+    width: 100%;
+    height: auto;
+  }
+}
