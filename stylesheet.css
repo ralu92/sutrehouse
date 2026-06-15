@@ -18,34 +18,16 @@ h1{
 
 hr{
   border: 1px solid black;
-
   margin: auto;
 }
 
-.image-row {
-  display: flex;
-  gap: 12px;
-  justify-content: center;
-  align-items: center;
+.box-lilac{
+    display: flex;
+    flex-wrap: wrap;
+    background-color: black;
+    justify-content: center;
 }
 
-.image-row img {
-  width: 600px;
-  height: auto;
-  border-radius: 10px;
-}
-
-@media (max-width: 768px) {
-  .image-row {
-    justify-content: flex-start;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch;
-    padding: 10px;
-  }
-
-  .image-row img {
-    flex: 0 0 auto;
-    scroll-snap-align: center;
-  }
+img{
+  border: 1px solid black;
 }
