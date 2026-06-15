@@ -3,3 +3,22 @@ header{
   text-align: center;
   outline: 2px solid black;
 }
+
+p{
+  text-align: center;
+  font-size: 25px;
+  color: black;
+  padding: 20px
+}
+
+h1{
+  text-align: center;
+  color: grey;
+  padding: 20px;
+}
+
+hr{
+  border: 1px solid black;
+
+  margin: auto;
+}
