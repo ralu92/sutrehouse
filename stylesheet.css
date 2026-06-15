@@ -24,11 +24,14 @@ hr{
 }
 
 .image-row {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-  img{
-    width: 100%;
-    height: auto;
-  }
+  display: flex;
+  gap: 10px;        
+  justify-content: center; 
+  align-items: center;
+  padding: 60px;
+}
+
+.image-row img {
+  width: 600px;
+  height: auto;
 }
