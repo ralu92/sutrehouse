@@ -1,12 +1,6 @@
 header{
-  padding: 15px;
+  padding: 50px;
   text-align: center;
-}
-
-.logo{
-  width: 180px;
-  max-width: 60vw;
-  height: auto;
 }
 
 p{
@@ -55,7 +49,7 @@ hr{
   grid-template-columns: repeat(2, 1fr);
   grid-auto-rows: 200px;
   gap: 5px;
-  width: 100%;
+  width: 90%;
   margin: auto;
   padding: 20px;
 }
@@ -71,47 +65,17 @@ hr{
 }
 
 .tall {
-  grid-row: span 1;
+  grid-row: span 2;
 }
 
-@media (max-width: 768px){
-
-  .gallery{
-    display: flex;
-    overflow-x: auto;
-    gap: 15px;
-    width: 100%;
-    padding: 20px;
+@media (max-width: 768px) {
+  .gallery {
+    grid-template-columns: repeat(1, 1fr);
   }
-
-  .gallery img{
-    width: 80vw;
-    height: auto;
-    flex-shrink: 0;
-  } 
 }
 
 .gallery img:hover {
   transform: scale(1.05);
   transition: 0.3s;
   border: 1px solid black;
-}
-
-@media (max-width: 768px){
-
-  p{
-    font-size: 18px;
-  }
-
-  h1{
-    font-size: 40px;
-  }
-
-  h2{
-    font-size: 32px;
-  }
-
-  h3{
-    font-size: 24px;
-  }
 }
