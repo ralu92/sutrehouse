@@ -35,8 +35,15 @@
                             <label class="option-button"><input type="radio" name="fit" value="regular" checked> Regular</label>
                             <label class="option-button"><input type="radio" name="fit" value="flared"> Flared</label>
                         </div>
+                        <div class="option-group">
+                            <span class="option-label">Size</span>
+                            <label class="option-button"><input type="radio" name="size" value="small" checked> Small</label>
+                            <label class="option-button"><input type="radio" name="size" value="medium"> Medium</label>
+                            <label class="option-button"><input type="radio" name="size" value="large"> Large</label>
+                        </div>
                     </form>
 
+                    <p><a id="order-now" href="checkout.html?product=Denim+Jeans&fit=regular" style="display:inline-block;padding:0.9rem 1.2rem;border-radius:6px;background:#333;color:#fff;text-decoration:none;">Order now</a></p>
                     <p><a href="clothing.html" style="color:var(--text);text-decoration:underline;">← Back to Clothing</a></p>
                 </div>
             </section>
@@ -45,5 +52,24 @@
         <footer class="site-footer">
             <p>SutreHouse · Denim Jeans</p>
         </footer>
+                <script>
+            const denimFitInputs = document.querySelectorAll('input[name="fit"]');
+            const sizeInputs = document.querySelectorAll('input[name="size"]');
+            const denimOrderLink = document.getElementById('order-now');
+            
+            function updateOrderLink() {
+                const selectedFit = document.querySelector('input[name="fit"]:checked').value;
+                const selectedSize = document.querySelector('input[name="size"]:checked').value;
+                denimOrderLink.href = 'checkout.html?product=Denim+Jeans&fit=' + encodeURIComponent(selectedFit) + '&size=' + encodeURIComponent(selectedSize);
+            }
+            
+            denimFitInputs.forEach(input => {
+                input.addEventListener('change', updateOrderLink);
+            });
+            sizeInputs.forEach(input => {
+                input.addEventListener('change', updateOrderLink);
+            });
+            updateOrderLink();
+        </script>
     </body>
 </html>

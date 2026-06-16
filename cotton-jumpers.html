@@ -28,6 +28,16 @@
                 <div style="padding:1rem 0;">
                     <p style="color:var(--muted);margin:0 0 0.5rem;">$135.00</p>
                     <p style="margin:0 0 1rem;color:#4f4b47;line-height:1.7;">A collection of soft cotton jumpers with subtle detailing, modern proportions, and the kind of effortless luxury that layers beautifully.</p>
+                                        <form class="product-options" action="#" onsubmit="return false;">
+                        <div class="option-group">
+                            <span class="option-label">Size</span>
+                            <label class="option-button"><input type="radio" name="size" value="small" checked> Small</label>
+                            <label class="option-button"><input type="radio" name="size" value="medium"> Medium</label>
+                            <label class="option-button"><input type="radio" name="size" value="large"> Large</label>
+                        </div>
+                    </form>
+
+                    <p><a id="order-now" href="checkout.html?product=Cotton+Jumpers" style="display:inline-block;padding:0.9rem 1.2rem;border-radius:6px;background:#333;color:#fff;text-decoration:none;">Order now</a></p>
                     <p><a href="clothing.html" style="color:var(--text);text-decoration:underline;">← Back to Clothing</a></p>
                 </div>
             </section>
@@ -36,5 +46,17 @@
         <footer class="site-footer">
             <p>SutreHouse · Cotton Jumpers</p>
         </footer>
+        <script>
+            const sizeInputs = document.querySelectorAll('input[name="size"]');
+            const orderLink = document.getElementById('order-now');
+            
+            sizeInputs.forEach(input => {
+                input.addEventListener('change', () => {
+                    const selectedSize = document.querySelector('input[name="size"]:checked').value;
+                    const baseUrl = 'checkout.html?product=Cotton+Jumpers';
+                    orderLink.href = baseUrl + '&size=' + encodeURIComponent(selectedSize);
+                });
+            });
+        </script>
     </body>
 </html>

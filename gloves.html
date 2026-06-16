@@ -1,6 +1,6 @@
 <html>
     <head>
-        <title>Denim Jacket · SutreHouse</title>
+        <title>Gloves · SutreHouse</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="stylesheet.css">
     </head>
@@ -18,16 +18,16 @@
 
         <main>
             <section class="page-hero">
-                <span class="eyebrow">Denim</span>
-                <h1>Signature Denim Jacket</h1>
-                <p>A signature design — structured denim with refined seaming, artisanal finishes, and enduring hardware.</p>
+                <span class="eyebrow">Winter</span>
+                <h1>Gloves</h1>
+                <p>Leather gloves with a precise fit and refined finish for thoughtful seasonal layering.</p>
             </section>
 
             <section class="product-hero" style="max-width:900px;margin:0 auto;padding:1rem;">
-                <div class="card-media" style="height:520px;background-image: url('images/denim-jacket.jpg')" role="img" aria-label="Denim Jacket"></div>
+                <div class="card-media" style="height:520px;background-image: url('images/gloves.jpg')" role="img" aria-label="Gloves"></div>
                 <div style="padding:1rem 0;">
-                    <p style="color:var(--muted);margin:0 0 0.5rem;">$165.00</p>
-                    <p style="margin:0 0 1rem;color:#4f4b47;line-height:1.7;">A signature design with balanced proportions and reinforced stitching, finished with considered hardware for longevity.</p>
+                    <p style="color:var(--muted);margin:0 0 0.5rem;">$120.00</p>
+                    <p style="margin:0 0 1rem;color:#4f4b47;line-height:1.7;">Premium leather gloves designed for a precise fit and polished finish. The understated shape and quality materials make them ideal for polished layering when the temperature drops.</p>
                                         <form class="product-options" action="#" onsubmit="return false;">
                         <div class="option-group">
                             <span class="option-label">Size</span>
@@ -37,14 +37,14 @@
                         </div>
                     </form>
 
-                    <p><a id="order-now" href="checkout.html?product=Signature+Denim+Jacket" style="display:inline-block;padding:0.9rem 1.2rem;border-radius:6px;background:#333;color:#fff;text-decoration:none;">Order now</a></p>
-                    <p><a href="clothing.html" style="color:var(--text);text-decoration:underline;">← Back to Clothing</a></p>
+                    <p><a id="order-now" href="checkout.html?product=Gloves" style="display:inline-block;padding:0.9rem 1.2rem;border-radius:6px;background:#333;color:#fff;text-decoration:none;">Order now</a></p>
+                    <p><a href="accessories.html" style="color:var(--text);text-decoration:underline;">← Back to Accessories</a></p>
                 </div>
             </section>
         </main>
 
         <footer class="site-footer">
-            <p>SutreHouse · Denim Jacket</p>
+            <p>SutreHouse · Gloves</p>
         </footer>
         <script>
             const sizeInputs = document.querySelectorAll('input[name="size"]');
@@ -53,7 +53,7 @@
             sizeInputs.forEach(input => {
                 input.addEventListener('change', () => {
                     const selectedSize = document.querySelector('input[name="size"]:checked').value;
-                    const baseUrl = 'checkout.html?product=Signature+Denim+Jacket';
+                    const baseUrl = 'checkout.html?product=Gloves';
                     orderLink.href = baseUrl + '&size=' + encodeURIComponent(selectedSize);
                 });
             });

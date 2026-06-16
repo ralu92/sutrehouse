@@ -1,0 +1,148 @@
+<html>
+    <head>
+        <title>Checkout · SutreHouse</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="stylesheet.css">
+    </head>
+    <body>
+        <header class="site-header">
+            <a href="index.html"><img src="sutre.jpg" class="logo" alt="SutreHouse logo"></a>
+            <nav class="main-nav">
+                <a href="index.html">Home</a>
+                <a href="clothing.html">Clothing</a>
+                <a href="bags.html">Bags</a>
+                <a href="accessories.html">Accessories</a>
+                <a href="collaborations.html">Collaborations</a>
+            </nav>
+        </header>
+
+        <main>
+            <section class="page-hero">
+                <span class="eyebrow">Checkout</span>
+                <h1>Order & Payment</h1>
+                <p>Submit your order details and use the payment instructions below to complete checkout.</p>
+            </section>
+
+            <section class="product-hero" style="max-width:900px;margin:0 auto;padding:1rem;">
+                <div style="padding:1rem 0;">
+                    <p style="margin:0 0 0.5rem;color:#4f4b47;line-height:1.7;">Enter your order details below and click Send Order. The order will be emailed to the address configured in the payment settings, then follow the bank transfer instructions.</p>
+                    <form id="order-form" style="display:grid;gap:1rem;max-width:600px;">
+                        <label>
+                            Your name
+                            <input type="text" id="customer-name" name="customer-name" placeholder="First Last" required style="width:100%;padding:0.75rem;border:1px solid #ccc;border-radius:6px;">
+                        </label>
+                        <label>
+                            Your email
+                            <input type="email" id="customer-email" name="customer-email" placeholder="you@example.com" required style="width:100%;padding:0.75rem;border:1px solid #ccc;border-radius:6px;">
+                        </label>
+                        <label>
+                            Phone or contact
+                            <input type="text" id="customer-phone" name="customer-phone" placeholder="Optional" style="width:100%;padding:0.75rem;border:1px solid #ccc;border-radius:6px;">
+                        </label>
+                        <label>
+                            Product
+                            <input type="text" id="product-name" name="product-name" placeholder="Item name" required style="width:100%;padding:0.75rem;border:1px solid #ccc;border-radius:6px;">
+                        </label>
+                        <label>
+                            Quantity
+                            <input type="number" id="product-quantity" name="product-quantity" value="1" min="1" style="width:100%;padding:0.75rem;border:1px solid #ccc;border-radius:6px;">
+                        </label>
+                        <label>
+                            Selected fit
+                            <input type="text" id="selected-fit" name="selected-fit" readonly placeholder="Not specified" style="width:100%;padding:0.75rem;border:1px solid #ccc;border-radius:6px;background:#f4f1eb;">
+                        </label>
+                        <label>
+                            Selected size
+                            <input type="text" id="selected-size" name="selected-size" readonly placeholder="Not specified" style="width:100%;padding:0.75rem;border:1px solid #ccc;border-radius:6px;background:#f4f1eb;">
+                        </label>
+                        <label>
+                            Shipping address
+                            <textarea id="shipping-address" name="shipping-address" rows="3" placeholder="Street address, city, postcode" style="width:100%;padding:0.75rem;border:1px solid #ccc;border-radius:6px;"></textarea>
+                        </label>
+                        <label>
+                            Additional notes
+                            <textarea id="order-notes" name="order-notes" rows="3" placeholder="Gift instructions, delivery preferences, etc." style="width:100%;padding:0.75rem;border:1px solid #ccc;border-radius:6px;"></textarea>
+                        </label>
+                        <button type="button" id="send-order" style="padding:0.9rem 1.2rem;border:none;border-radius:6px;background:#333;color:#fff;font-size:1rem;cursor:pointer;">Send Order</button>
+                    </form>
+                    <div style="margin-top:2rem;padding:1rem;border:1px solid #e2ded9;border-radius:12px;background:#faf7f2;">
+                        <h2 style="margin-top:0;font-size:1.1rem;">Payment settings</h2>
+                        <p style="margin:0 0 0.75rem;color:#4f4b47;line-height:1.7;">Edit the merchant email and bank details below to receive orders and payments.</p>
+                        <p style="margin:0.75rem 0 0;"><strong>Merchant email:</strong> <span id="merchant-email">orders@example.com</span></p>
+                        <p style="margin:0.5rem 0 0;"><strong>Bank details:</strong></p>
+                        <p style="margin:0.25rem 0 0;">Bank: <span id="bank-name">Example Bank</span></p>
+                        <p style="margin:0.25rem 0 0;">IBAN / Account: <span id="bank-account">000000000</span></p>
+                        <p style="margin:0.25rem 0 0;">SWIFT/BIC: <span id="bank-swift">EXAMP001</span></p>
+                        <p style="margin:1rem 0 0;color:#4f4b47;line-height:1.7;">Use a mail client to submit the order. The bank details above are the account to send payment to once the order is received.</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="site-footer">
+            <p>SutreHouse · Checkout</p>
+        </footer>
+
+        <script>
+            const merchantEmail = 'orders@example.com';
+            const bankAccount = '000000000';
+            const bankName = 'Example Bank';
+            const bankSwift = 'EXAMP001';
+            const productInput = document.getElementById('product-name');
+            const selectedFitInput = document.getElementById('selected-fit');
+            const selectedSizeInput = document.getElementById('selected-size');
+            const sendOrder = document.getElementById('send-order');
+            const urlParams = new URLSearchParams(window.location.search);
+            const productParam = urlParams.get('product');
+            const fitParam = urlParams.get('fit');
+            const sizeParam = urlParams.get('size');
+            if (productParam) {
+                productInput.value = decodeURIComponent(productParam);
+            }
+            if (fitParam) {
+                selectedFitInput.value = decodeURIComponent(fitParam);
+            }
+            if (sizeParam) {
+                selectedSizeInput.value = decodeURIComponent(sizeParam);
+            }
+            document.getElementById('merchant-email').textContent = merchantEmail;
+            document.getElementById('bank-name').textContent = bankName;
+            document.getElementById('bank-account').textContent = bankAccount;
+            document.getElementById('bank-swift').textContent = bankSwift;
+            sendOrder.addEventListener('click', () => {
+                const name = encodeURIComponent(document.getElementById('customer-name').value.trim());
+                const email = encodeURIComponent(document.getElementById('customer-email').value.trim());
+                const phone = encodeURIComponent(document.getElementById('customer-phone').value.trim());
+                const product = encodeURIComponent(document.getElementById('product-name').value.trim());
+                const fit = encodeURIComponent(document.getElementById('selected-fit').value.trim());
+                const size = encodeURIComponent(document.getElementById('selected-size').value.trim());
+                const quantity = encodeURIComponent(document.getElementById('product-quantity').value.trim());
+                const address = encodeURIComponent(document.getElementById('shipping-address').value.trim());
+                const notes = encodeURIComponent(document.getElementById('order-notes').value.trim());
+                if (!name || !email || !product) {
+                    alert('Please enter your name, email, and product before sending.');
+                    return;
+                }
+                const subject = encodeURIComponent('New order from ' + document.getElementById('customer-name').value.trim());
+                const body = encodeURIComponent(
+                    'Order details:\n' +
+                    'Name: ' + document.getElementById('customer-name').value.trim() + '\n' +
+                    'Email: ' + document.getElementById('customer-email').value.trim() + '\n' +
+                    'Phone: ' + document.getElementById('customer-phone').value.trim() + '\n' +
+                    'Product: ' + document.getElementById('product-name').value.trim() + '\n' +
+                    (fit && fit !== '' ? 'Fit: ' + document.getElementById('selected-fit').value.trim() + '\n' : '') +
+                    (size && size !== '' ? 'Size: ' + document.getElementById('selected-size').value.trim() + '\n' : '') +
+                    'Quantity: ' + document.getElementById('product-quantity').value.trim() + '\n' +
+                    'Shipping address: ' + document.getElementById('shipping-address').value.trim() + '\n' +
+                    'Notes: ' + document.getElementById('order-notes').value.trim() + '\n\n' +
+                    'Payment instructions:\n' +
+                    'Bank: ' + bankName + '\n' +
+                    'Account: ' + bankAccount + '\n' +
+                    'SWIFT/BIC: ' + bankSwift + '\n'
+                );
+                const mailto = 'mailto:' + merchantEmail + '?subject=' + subject + '&body=' + body;
+                window.location.href = mailto;
+            });
+        </script>
+    </body>
+</html>
