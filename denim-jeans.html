@@ -13,6 +13,9 @@
                 <a href="bags.html">Bags</a>
                 <a href="accessories.html">Accessories</a>
                 <a href="collaborations.html">Collaborations</a>
+                <a href="checkout.html">
+                    Cart (<span id="cart-count">0</span>)
+                </a>                
             </nav>
         </header>
 
@@ -24,52 +27,165 @@
             </section>
 
             <section class="product-hero" style="max-width:900px;margin:0 auto;padding:1rem;">
-                <img src="denim-jeans.jpg" alt="Denim Jeans" style="width:100%;height:100%;object-fit:cover;display:block;">
-                <div style="padding:1rem 0;">
-                    <p style="color:var(--muted);margin:0 0 0.5rem;">$145.00</p>
-                    <p style="margin:0 0 1rem;color:#4f4b47;line-height:1.7;">A versatile jean engineered for daily wear — comfortable through movement, finished with a refined hem and considered pocketing.</p>
 
-                    <form class="product-options" action="#" onsubmit="return false;">
+                <img src="denim-jeans.jpg"
+                    alt="Denim Jeans"
+                    style="width:100%;height:100%;object-fit:cover;display:block;">
+
+                <div style="padding:1rem 0;">
+
+                    <p style="color:var(--muted);margin:0 0 0.5rem;">
+                        £145.00
+                    </p>
+
+                    <p style="margin:0 0 1rem;color:#4f4b47;line-height:1.7;">
+                        A versatile jean engineered for daily wear — comfortable through movement,
+                        finished with a refined hem and considered pocketing.
+                    </p>
+
+                    <form class="product-options" onsubmit="return false;">
+
                         <div class="option-group">
                             <span class="option-label">Fit</span>
-                            <label class="option-button"><input type="radio" name="fit" value="regular" checked> Regular</label>
-                            <label class="option-button"><input type="radio" name="fit" value="flared"> Flared</label>
+
+                            <label class="option-button">
+                                <input type="radio" name="fit" value="Regular" checked>
+                                Regular
+                            </label>
+
+                            <label class="option-button">
+                                <input type="radio" name="fit" value="Flared">
+                                Flared
+                            </label>
                         </div>
+
                         <div class="option-group">
                             <span class="option-label">Size</span>
-                            <label class="option-button"><input type="radio" name="size" value="small" checked> Small</label>
-                            <label class="option-button"><input type="radio" name="size" value="medium"> Medium</label>
-                            <label class="option-button"><input type="radio" name="size" value="large"> Large</label>
-                        </div>
-                    </form>
 
-                    <p><a id="order-now" href="checkout.html?product=Denim+Jeans&fit=regular" style="display:inline-block;padding:0.9rem 1.2rem;border-radius:6px;background:#333;color:#fff;text-decoration:none;">Order now</a></p>
+                            <label class="option-button">
+                                <input type="radio" name="size" value="Small" checked>
+                                Small
+                            </label>
+
+                            <label class="option-button">
+                                <input type="radio" name="size" value="Medium">
+                                Medium
+                            </label>
+
+                            <label class="option-button">
+                                <input type="radio" name="size" value="Large">
+                                Large
+                            </label>
+                        </div>
+
+                        <p style="margin-top:1.5rem;">
+                            <button
+                                type="button"
+                                onclick="addToCart()"
+                                style="padding:0.9rem 1.2rem;border-radius:6px;background:#333;color:#fff;border:none;cursor:pointer;">
+                                Add to Cart
+                            </button>
+                        </p>
+
+                    </form>
                     <p><a href="clothing.html" style="color:var(--text);text-decoration:underline;">← Back to Clothing</a></p>
                 </div>
             </section>
+
+            <script>
+            function addToCart() {
+
+                const fit =
+                    document.querySelector('input[name="fit"]:checked').value;
+
+                const size =
+                    document.querySelector('input[name="size"]:checked').value;
+
+                let cart =
+                    JSON.parse(localStorage.getItem("cart")) || [];
+
+                const existing =
+                    cart.find(item =>
+                        item.name === "Denim Jeans" &&
+                        item.fit === fit &&
+                        item.size === size
+                    );
+
+                if (existing) {
+                    existing.quantity++;
+                } else {
+                    cart.push({
+                        name: "Denim Jeans",
+                        price: 145,
+                        fit: fit,
+                        size: size,
+                        quantity: 1
+                    });
+                }
+
+                localStorage.setItem("cart", JSON.stringify(cart));
+
+                updateCartCount(); // Refresh cart number immediately
+
+                alert("Added to cart");
+            }
+
+            document.addEventListener("DOMContentLoaded", function () {
+                updateCartCount();
+                renderCart(); // if you're on checkout page
+            });
+            </script>
+
+                        <script>
+                const denimFitInputs = document.querySelectorAll('input[name="fit"]');
+                const sizeInputs = document.querySelectorAll('input[name="size"]');
+                const denimOrderLink = document.getElementById('order-now');
+                
+                function updateOrderLink() {
+                    const selectedFit = document.querySelector('input[name="fit"]:checked').value;
+                    const selectedSize = document.querySelector('input[name="size"]:checked').value;
+                    denimOrderLink.href = 'checkout.html?product=Denim+Jeans&fit=' + encodeURIComponent(selectedFit) + '&size=' + encodeURIComponent(selectedSize);
+                }
+                
+                denimFitInputs.forEach(input => {
+                    input.addEventListener('change', updateOrderLink);
+                });
+                sizeInputs.forEach(input => {
+                    input.addEventListener('change', updateOrderLink);
+                });
+                updateOrderLink();
+
+                function updateCartCount() {
+                    const count = document.getElementById("cart-count");
+                    if (count) {
+                        count.textContent = cart.length;
+                    }
+                }
+
+                updateCart();
+                updateCartCount();  
+                
+                function updateCartCount() {
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+    let totalItems = cart.reduce(
+        (sum, item) => sum + item.quantity,
+        0
+    );
+
+    document.getElementById("cart-count").textContent =
+        totalItems;
+}
+            </script>
+
         </main>
 
         <footer class="site-footer">
             <p>SutreHouse · Denim Jeans</p>
         </footer>
-                <script>
-            const denimFitInputs = document.querySelectorAll('input[name="fit"]');
-            const sizeInputs = document.querySelectorAll('input[name="size"]');
-            const denimOrderLink = document.getElementById('order-now');
-            
-            function updateOrderLink() {
-                const selectedFit = document.querySelector('input[name="fit"]:checked').value;
-                const selectedSize = document.querySelector('input[name="size"]:checked').value;
-                denimOrderLink.href = 'checkout.html?product=Denim+Jeans&fit=' + encodeURIComponent(selectedFit) + '&size=' + encodeURIComponent(selectedSize);
-            }
-            
-            denimFitInputs.forEach(input => {
-                input.addEventListener('change', updateOrderLink);
-            });
-            sizeInputs.forEach(input => {
-                input.addEventListener('change', updateOrderLink);
-            });
-            updateOrderLink();
-        </script>
+
+
+
+
     </body>
 </html>

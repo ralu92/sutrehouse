@@ -435,3 +435,20 @@ img {
     border-radius: 22px;
   }
 }
+
+.payment-settings{
+    margin-top:2rem;
+    padding:1rem;
+    border:1px solid #e2ded9;
+    border-radius:12px;
+    background:#faf7f2;
+}
+
+.checkout-btn{
+    display:inline-block;
+    padding:12px 24px;
+    background:#000;
+    color:#fff;
+    text-decoration:none;
+    border-radius:8px;
+}
