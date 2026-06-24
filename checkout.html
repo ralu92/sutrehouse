@@ -24,67 +24,6 @@
             <p>SutreHouse · Checkout</p>
         </footer>
 
-        <script>
-            const merchantEmail = 'orders@example.com';
-            const bankAccount = '000000000';
-            const bankName = 'Example Bank';
-            const bankSwift = 'EXAMP001';
-            const productInput = document.getElementById('product-name');
-            const selectedFitInput = document.getElementById('selected-fit');
-            const selectedSizeInput = document.getElementById('selected-size');
-            const sendOrder = document.getElementById('send-order');
-            const urlParams = new URLSearchParams(window.location.search);
-            const productParam = urlParams.get('product');
-            const fitParam = urlParams.get('fit');
-            const sizeParam = urlParams.get('size');
-            if (productParam) {
-                productInput.value = decodeURIComponent(productParam);
-            }
-            if (fitParam) {
-                selectedFitInput.value = decodeURIComponent(fitParam);
-            }
-            if (sizeParam) {
-                selectedSizeInput.value = decodeURIComponent(sizeParam);
-            }
-            document.getElementById('merchant-email').textContent = merchantEmail;
-            document.getElementById('bank-name').textContent = bankName;
-            document.getElementById('bank-account').textContent = bankAccount;
-            document.getElementById('bank-swift').textContent = bankSwift;
-            sendOrder.addEventListener('click', () => {
-                const name = encodeURIComponent(document.getElementById('customer-name').value.trim());
-                const email = encodeURIComponent(document.getElementById('customer-email').value.trim());
-                const phone = encodeURIComponent(document.getElementById('customer-phone').value.trim());
-                const product = encodeURIComponent(document.getElementById('product-name').value.trim());
-                const fit = encodeURIComponent(document.getElementById('selected-fit').value.trim());
-                const size = encodeURIComponent(document.getElementById('selected-size').value.trim());
-                const quantity = encodeURIComponent(document.getElementById('product-quantity').value.trim());
-                const address = encodeURIComponent(document.getElementById('shipping-address').value.trim());
-                const notes = encodeURIComponent(document.getElementById('order-notes').value.trim());
-                if (!name || !email || !product) {
-                    alert('Please enter your name, email, and product before sending.');
-                    return;
-                }
-                const subject = encodeURIComponent('New order from ' + document.getElementById('customer-name').value.trim());
-                const body = encodeURIComponent(
-                    'Order details:\n' +
-                    'Name: ' + document.getElementById('customer-name').value.trim() + '\n' +
-                    'Email: ' + document.getElementById('customer-email').value.trim() + '\n' +
-                    'Phone: ' + document.getElementById('customer-phone').value.trim() + '\n' +
-                    'Product: ' + document.getElementById('product-name').value.trim() + '\n' +
-                    (fit && fit !== '' ? 'Fit: ' + document.getElementById('selected-fit').value.trim() + '\n' : '') +
-                    (size && size !== '' ? 'Size: ' + document.getElementById('selected-size').value.trim() + '\n' : '') +
-                    'Quantity: ' + document.getElementById('product-quantity').value.trim() + '\n' +
-                    'Shipping address: ' + document.getElementById('shipping-address').value.trim() + '\n' +
-                    'Notes: ' + document.getElementById('order-notes').value.trim() + '\n\n' +
-                    'Payment instructions:\n' +
-                    'Bank: ' + bankName + '\n' +
-                    'Account: ' + bankAccount + '\n' +
-                    'SWIFT/BIC: ' + bankSwift + '\n'
-                );
-                const mailto = 'mailto:' + merchantEmail + '?subject=' + subject + '&body=' + body;
-                window.location.href = mailto;
-            });
-        </script>
     </body>
 </html>
 
