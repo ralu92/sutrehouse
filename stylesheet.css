@@ -453,3 +453,42 @@ img {
     border-radius:8px;
 }
 
+.checkout-container{
+    display:grid;
+    grid-template-columns:1fr 400px;
+    gap:60px;
+    max-width:1200px;
+    margin:auto;
+    padding:50px;
+}
+
+.checkout-form{
+    background:white;
+    padding:40px;
+    border-radius:20px;
+    box-shadow:var(--shadow);
+}
+
+.order-summary{
+    background:white;
+    padding:40px;
+    border-radius:20px;
+    box-shadow:var(--shadow);
+    position:sticky;
+    top:120px;
+}
+
+.checkout-form input{
+    width:100%;
+    padding:16px;
+    margin-bottom:20px;
+    border:1px solid #ddd;
+}
+
+@media(max-width:900px){
+
+    .checkout-container{
+        grid-template-columns:1fr;
+    }
+
+}
