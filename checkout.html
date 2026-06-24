@@ -1,11 +1,11 @@
 <html>
     <head>
-        <title>Checkout · SutreHouse</title>
+        <title>Denim Jeans · SutreHouse</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="stylesheet.css">
     </head>
     <body>
-        <header class="site-header">
+                <header class="site-header">
             <a href="index.html"><img src="sutre.jpg" class="logo" alt="SutreHouse logo"></a>
             <nav class="main-nav">
                 <a href="index.html">Home</a>
@@ -13,194 +13,10 @@
                 <a href="bags.html">Bags</a>
                 <a href="accessories.html">Accessories</a>
                 <a href="collaborations.html">Collaborations</a>
+                <a href="checkout.html">
+                    Cart (<span id="cart-count">0</span>)
+                </a>                
             </nav>
         </header>
-
-        <main>
-          
-        </main>
-
-        <footer class="site-footer">
-            <p>SutreHouse · Checkout</p>
-        </footer>
-
     </body>
 </html>
-
-```html
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Checkout - Sutrehouse</title>
-
-<style>
-body{
-    font-family: Arial, sans-serif;
-    max-width: 900px;
-    margin: 40px auto;
-    padding: 20px;
-}
-
-.cart-item{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    border-bottom:1px solid #ddd;
-    padding:15px 0;
-}
-
-.controls{
-    display:flex;
-    align-items:center;
-    gap:10px;
-}
-
-button{
-    padding:6px 12px;
-    cursor:pointer;
-}
-
-.remove-btn{
-    background:#c0392b;
-    color:white;
-    border:none;
-    border-radius:4px;
-}
-
-.qty-btn{
-    border:1px solid #ccc;
-    background:white;
-}
-
-.checkout-btn{
-    margin-top:20px;
-    padding:12px 20px;
-    background:black;
-    color:white;
-    border:none;
-    border-radius:6px;
-    font-size:16px;
-}
-</style>
-</head>
-<body>
-
-<h1>Shopping Cart</h1>
-
-<div id="cart-container"></div>
-
-<h2>Total: £<span id="total">0.00</span></h2>
-
-<button class="checkout-btn" onclick="proceedToPayment()">
-Proceed to Payment
-</button>
-
-<script>
-let cart = JSON.parse(localStorage.getItem("cart")) || [];
-
-// Convert old cart format into quantity format
-cart = cart.map(item => ({
-    ...item,
-    quantity: item.quantity || 1
-}));
-
-function saveCart(){
-    localStorage.setItem("cart", JSON.stringify(cart));
-}
-
-function renderCart(){
-
-    const container = document.getElementById("cart-container");
-    const totalElement = document.getElementById("total");
-
-    container.innerHTML = "";
-
-    let total = 0;
-
-    cart.forEach((item,index)=>{
-
-        total += item.price * item.quantity;
-
-        container.innerHTML += `
-            <div class="cart-item">
-                <div>
-                    <strong>${item.name}</strong><br>
-                    Fit: ${item.fit}<br>
-                    Size: ${item.size}<br>
-                    £${item.price}
-                </div>
-
-                <div class="controls">
-
-                    <button class="qty-btn"
-                        onclick="decreaseQty(${index})">
-                        -
-                    </button>
-
-                    <span>${item.quantity}</span>
-
-                    <button class="qty-btn"
-                        onclick="increaseQty(${index})">
-                        +
-                    </button>
-
-                    <button class="remove-btn"
-                        onclick="removeItem(${index})">
-                        Remove
-                    </button>
-
-                </div>
-            </div>
-        `;
-    });
-
-    totalElement.textContent = total.toFixed(2);
-
-    saveCart();
-}
-
-function increaseQty(index){
-    cart[index].quantity++;
-    renderCart();
-}
-
-function decreaseQty(index){
-    if(cart[index].quantity > 1){
-        cart[index].quantity--;
-    } else {
-        cart.splice(index,1);
-    }
-
-    renderCart();
-}
-
-function removeItem(index){
-    cart.splice(index,1);
-    renderCart();
-}
-
-function proceedToPayment(){
-
-    const total = cart.reduce(
-        (sum,item)=>sum + item.price * item.quantity,
-        0
-    );
-
-    alert(
-        "Order Total: £" +
-        total.toFixed(2) +
-        "\\nConnect this button to SumUp Checkout."
-    );
-}
-
-renderCart();
-
-
-</script>
-
-
-</body>
-</html>
-```
