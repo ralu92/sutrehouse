@@ -9,41 +9,44 @@ app.use(express.json());
 
 app.post("/create-checkout", async (req, res) => {
 
-    try {
+  try {
 
-        const response = await axios.post(
-            "https://api.sumup.com/v0.1/checkouts",
-            {
-                checkout_reference: "ORDER-" + Date.now(),
-                amount: req.body.amount,
-                currency: "GBP",
-                pay_to_email: "YOUR_SUMUP_EMAIL",
-                description: "SutreHouse Order"
-            },
-            {
-                headers: {
-                    Authorization: "Bearer YOUR_ACCESS_TOKEN",
-                    "Content-Type": "application/json"
-                }
-            }
-        );
+    const response = await axios.post(
+      "https://api.sumup.com/v0.1/checkouts",
+      {
+        checkout_reference: "ORDER-" + Date.now(),
+        amount: req.body.amount,
+        currency: "GBP",
+        pay_to_email: "rr4lu00@gmail.com",
+        description: "SutreHouse Order"
+      },
+      {
+        headers: {
+          Authorization: "Bearer YOUR_ACCESS_TOKEN",
+          "Content-Type": "application/json"
+        }
+      }
+    );
 
-        res.json({
-            checkout_url: response.data.hosted_checkout_url
-        });
+    // 🔥 THIS IS THE KEY PART (HOSTED CHECKOUT URL)
+    const checkoutUrl = response.data.hosted_checkout_url;
 
-    } catch (err) {
-        console.log("SUMUP ERROR:", err.response?.data || err.message);
+    res.json({
+      url: checkoutUrl
+    });
 
-        res.status(500).json({
-            error: "Payment creation failed"
-        });
-    }
+  } catch (err) {
+    console.log(err.response?.data || err.message);
 
+    res.status(500).json({
+      error: "Checkout creation failed"
+    });
+  }
 });
 
+// IMPORTANT FOR DEPLOYMENT
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+  console.log(`Server running on ${PORT}`);
 });
