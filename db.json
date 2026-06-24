@@ -1,0 +1,59 @@
+{
+  "orders": [
+    {
+      "id": 1782317738145,
+      "amount": 145,
+      "status": "PENDING"
+    },
+    {
+      "id": 1782317738554,
+      "amount": 145,
+      "status": "PENDING"
+    },
+    {
+      "id": 1782317739393,
+      "amount": 145,
+      "status": "PENDING"
+    },
+    {
+      "id": 1782317740270,
+      "amount": 145,
+      "status": "PENDING"
+    },
+    {
+      "id": 1782317740668,
+      "amount": 145,
+      "status": "PENDING"
+    },
+    {
+      "id": 1782317740795,
+      "amount": 145,
+      "status": "PENDING"
+    },
+    {
+      "id": 1782317741299,
+      "amount": 145,
+      "status": "PENDING"
+    },
+    {
+      "id": 1782317741412,
+      "amount": 145,
+      "status": "PENDING"
+    },
+    {
+      "id": 1782317741435,
+      "amount": 145,
+      "status": "PENDING"
+    }
+  ],
+  "stock": [
+    {
+      "id": 1,
+      "name": "Denim Jeans",
+      "size": "32",
+      "color": "Blue",
+      "stock": 10,
+      "price": 60
+    }
+  ]
+}

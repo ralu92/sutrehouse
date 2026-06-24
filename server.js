@@ -1,52 +1,186 @@
-const express = require("express");
-const cors = require("cors");
-const axios = require("axios");
+require('dotenv').config();
+
+const express = require('express');
+const cors = require('cors');
+const axios = require('axios');
+const nodemailer = require("nodemailer");
+
+const { Low } = require('lowdb');
+const { JSONFile } = require('lowdb/node');
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 
-app.post("/create-checkout", async (req, res) => {
+/* ---------------- DATABASE ---------------- */
 
-  try {
+const db = new Low(new JSONFile('db.json'));
 
-    const response = await axios.post(
-      "https://api.sumup.com/v0.1/checkouts",
-      {
-        checkout_reference: "ORDER-" + Date.now(),
-        amount: req.body.amount,
-        currency: "GBP",
-        pay_to_email: "rr4lu00@gmail.com",
-        description: "SutreHouse Order"
-      },
-      {
-        headers: {
-          Authorization: "Bearer YOUR_ACCESS_TOKEN",
-          "Content-Type": "application/json"
-        }
-      }
-    );
+async function initDB() {
+    await db.read();
+    db.data ||= { orders: [] };
+}
+initDB();
 
-    // 🔥 THIS IS THE KEY PART (HOSTED CHECKOUT URL)
-    const checkoutUrl = response.data.hosted_checkout_url;
+/* ---------------- EMAIL ---------------- */
 
-    res.json({
-      url: checkoutUrl
-    });
-
-  } catch (err) {
-    console.log(err.response?.data || err.message);
-
-    res.status(500).json({
-      error: "Checkout creation failed"
-    });
-  }
+const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+        user: process.env.EMAIL,
+        pass: process.env.EMAIL_PASS
+    }
 });
 
-// IMPORTANT FOR DEPLOYMENT
-const PORT = process.env.PORT || 3000;
+/* ---------------- EMAIL HELPERS ---------------- */
 
-app.listen(PORT, () => {
-  console.log(`Server running on ${PORT}`);
+function formatItems(items) {
+    return items
+        .map(i => `${i.name} - ${i.size} - ${i.fit} x${i.quantity}`)
+        .join("\n");
+}
+
+async function sendCustomerEmail(order) {
+    await transporter.sendMail({
+        from: process.env.EMAIL,
+        to: order.customerEmail,
+        subject: "🛍️ Order Confirmation - Sutre House",
+        text: `
+Thank you for your order!
+
+Order ID: ${order.id}
+Total: £${order.amount}
+
+Items:
+${formatItems(order.items)}
+        `
+    });
+}
+
+async function sendAdminEmail(order) {
+    await transporter.sendMail({
+        from: process.env.EMAIL,
+        to: process.env.EMAIL,
+        subject: "🛒 New Paid Order",
+        text: `
+NEW ORDER PAID
+
+Order ID: ${order.id}
+Total: £${order.amount}
+
+Items:
+${formatItems(order.items)}
+        `
+    });
+}
+
+/* ---------------- CREATE CHECKOUT ---------------- */
+
+app.post('/create-checkout', async (req, res) => {
+    try {
+
+        const { amount, description, items, customerEmail } = req.body;
+
+        if (!amount || !items || !customerEmail) {
+            return res.status(400).json({
+                error: "Missing amount, items or customerEmail"
+            });
+        }
+
+        const orderId = Date.now().toString();
+
+        await db.read();
+
+        db.data.orders.push({
+            id: orderId,
+            amount: Number(amount),
+            items,
+            customerEmail,
+            status: "PENDING"
+        });
+
+        await db.write();
+
+        /* ---------------- SUMUP REQUEST ---------------- */
+
+        const sumupResponse = await axios.post(
+            "https://api.sumup.com/v0.1/checkouts",
+            {
+                checkout_reference: orderId,
+                amount: Number(amount),
+                currency: "GBP",
+                merchant_code: process.env.MERCHANT_CODE,
+                description: description || "Sutre House Order",
+                hosted_checkout: { enabled: true },
+                return_url: process.env.RETURN_URL
+            },
+            {
+                headers: {
+                    Authorization: `Bearer ${process.env.SUMUP_API_KEY}`,
+                    "Content-Type": "application/json"
+                }
+            }
+        );
+
+        console.log("SUMUP RESPONSE:", sumupResponse.data);
+
+        const url = sumupResponse.data?.hosted_checkout_url;
+
+        if (!url) {
+            console.error("NO CHECKOUT URL:", sumupResponse.data);
+
+            return res.status(500).json({
+                error: "SumUp did not return checkout URL",
+                raw: sumupResponse.data
+            });
+        }
+
+        return res.json({ url });
+
+    } catch (err) {
+
+        console.error("SUMUP ERROR:");
+        console.error(err.response?.data || err.message);
+
+        return res.status(500).json({
+            error: "checkout failed",
+            details: err.response?.data || err.message
+        });
+    }
+});
+
+/* ---------------- WEBHOOK ---------------- */
+
+app.post('/sumup-webhook', async (req, res) => {
+
+    console.log("WEBHOOK RECEIVED:", req.body);
+
+    const event = req.body;
+
+    if (event.event_type === "checkout.paid") {
+
+        const orderId = event.data.checkout_reference;
+
+        await db.read();
+
+        const order = db.data.orders.find(o => o.id == orderId);
+
+        if (order) {
+            order.status = "PAID";
+
+            await db.write();
+
+            await sendAdminEmail(order);
+            await sendCustomerEmail(order);
+        }
+    }
+
+    res.sendStatus(200);
+});
+
+/* ---------------- START SERVER ---------------- */
+
+app.listen(3000, () => {
+    console.log("Server running on http://localhost:3000");
 });

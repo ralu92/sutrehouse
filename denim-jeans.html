@@ -92,80 +92,45 @@
                 </div>
             </section>
 
-            <script>
-            function addToCart() {
+<script>
+function addToCart() {
 
-                const fit =
-                    document.querySelector('input[name="fit"]:checked').value;
+    const fit =
+        document.querySelector('input[name="fit"]:checked').value;
 
-                const size =
-                    document.querySelector('input[name="size"]:checked').value;
+    const size =
+        document.querySelector('input[name="size"]:checked').value;
 
-                let cart =
-                    JSON.parse(localStorage.getItem("cart")) || [];
+    let cart =
+        JSON.parse(localStorage.getItem("cart")) || [];
 
-                const existing =
-                    cart.find(item =>
-                        item.name === "Denim Jeans" &&
-                        item.fit === fit &&
-                        item.size === size
-                    );
+    const existing =
+        cart.find(item =>
+            item.name === "Denim Jeans" &&
+            item.fit === fit &&
+            item.size === size
+        );
 
-                if (existing) {
-                    existing.quantity++;
-                } else {
-                    cart.push({
-                        name: "Denim Jeans",
-                        price: 145,
-                        fit: fit,
-                        size: size,
-                        quantity: 1
-                    });
-                }
+    if (existing) {
+        existing.quantity++;
+    } else {
+        cart.push({
+            name: "Denim Jeans",
+            price: 145,
+            fit: fit,
+            size: size,
+            quantity: 1
+        });
+    }
 
-                localStorage.setItem("cart", JSON.stringify(cart));
+    localStorage.setItem("cart", JSON.stringify(cart));
 
-                updateCartCount(); // Refresh cart number immediately
+    updateCartCount();
 
-                alert("Added to cart");
-            }
+    alert("Added to cart");
+}
 
-            document.addEventListener("DOMContentLoaded", function () {
-                updateCartCount();
-                renderCart(); // if you're on checkout page
-            });
-            </script>
-
-                        <script>
-                const denimFitInputs = document.querySelectorAll('input[name="fit"]');
-                const sizeInputs = document.querySelectorAll('input[name="size"]');
-                const denimOrderLink = document.getElementById('order-now');
-                
-                function updateOrderLink() {
-                    const selectedFit = document.querySelector('input[name="fit"]:checked').value;
-                    const selectedSize = document.querySelector('input[name="size"]:checked').value;
-                    denimOrderLink.href = 'checkout.html?product=Denim+Jeans&fit=' + encodeURIComponent(selectedFit) + '&size=' + encodeURIComponent(selectedSize);
-                }
-                
-                denimFitInputs.forEach(input => {
-                    input.addEventListener('change', updateOrderLink);
-                });
-                sizeInputs.forEach(input => {
-                    input.addEventListener('change', updateOrderLink);
-                });
-                updateOrderLink();
-
-                function updateCartCount() {
-                    const count = document.getElementById("cart-count");
-                    if (count) {
-                        count.textContent = cart.length;
-                    }
-                }
-
-                updateCart();
-                updateCartCount();  
-                
-                function updateCartCount() {
+function updateCartCount() {
     let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
     let totalItems = cart.reduce(
@@ -173,10 +138,17 @@
         0
     );
 
-    document.getElementById("cart-count").textContent =
-        totalItems;
+    const el = document.getElementById("cart-count");
+
+    if (el) {
+        el.textContent = totalItems;
+    }
 }
-            </script>
+
+document.addEventListener("DOMContentLoaded", updateCartCount);
+</script>
+
+    
 
         </main>
 
