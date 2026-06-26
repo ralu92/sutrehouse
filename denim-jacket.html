@@ -44,22 +44,65 @@
                     <p><a href="clothing.html" style="color:var(--text);text-decoration:underline;">← Back to Clothing</a></p>
                 </div>
             </section>
+<script>
+function addToCart() {
+
+    const fit =
+        document.querySelector('input[name="fit"]:checked').value;
+
+    const size =
+        document.querySelector('input[name="size"]:checked').value;
+
+    let cart =
+        JSON.parse(localStorage.getItem("cart")) || [];
+
+    const existing =
+        cart.find(item =>
+            item.name === "Denim Jeans" &&
+            item.fit === fit &&
+            item.size === size
+        );
+
+    if (existing) {
+        existing.quantity++;
+    } else {
+        cart.push({
+            name: "Denim Jeans",
+            price: 145,
+            fit: fit,
+            size: size,
+            quantity: 1
+        });
+    }
+
+    localStorage.setItem("cart", JSON.stringify(cart));
+
+    updateCartCount();
+
+    alert("Added to cart");
+}
+
+function updateCartCount() {
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+    let totalItems = cart.reduce(
+        (sum, item) => sum + item.quantity,
+        0
+    );
+
+    const el = document.getElementById("cart-count");
+
+    if (el) {
+        el.textContent = totalItems;
+    }
+}
+
+document.addEventListener("DOMContentLoaded", updateCartCount);
+</script>
         </main>
 
         <footer class="site-footer">
             <p>SutreHouse · Denim Jacket</p>
         </footer>
-        <script>
-            const sizeInputs = document.querySelectorAll('input[name="size"]');
-            const orderLink = document.getElementById('order-now');
-            
-            sizeInputs.forEach(input => {
-                input.addEventListener('change', () => {
-                    const selectedSize = document.querySelector('input[name="size"]:checked').value;
-                    const baseUrl = 'checkout.html?product=Signature+Denim+Jacket';
-                    orderLink.href = baseUrl + '&size=' + encodeURIComponent(selectedSize);
-                });
-            });
-        </script>
     </body>
 </html>
