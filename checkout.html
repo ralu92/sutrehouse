@@ -27,20 +27,22 @@
 
                 <h2>Total: £<span id="total">0.00</span></h2>
                 <input
-    type="email"
-    id="customer-email"
-    placeholder="Enter your email"
-    required
-    style="padding:10px;width:100%;margin:10px 0;"
->
+                    type="email"
+                    id="customer-email"
+                    placeholder="Enter your email"
+                    required
+                    style="padding:10px;width:100%;margin:10px 0;"
+                >
                 <button class="checkout-btn" id="pay-btn">
                 Pay Securely with SumUp
                 </button>
       </section>
         </main>
 
-<!-- 👇 THIS IS WHERE YOUR SCRIPT GOES -->
 <script>
+// --- CONFIGURATION ---
+// REPLACE THIS with your actual Render URL (e.g., https://your-service.onrender.com)
+const BACKEND_URL = "https://sutrehouse-backend.onrender.com"; 
 
 // Load cart safely
 let cart = JSON.parse(localStorage.getItem("cart") || "[]");
@@ -129,7 +131,7 @@ function removeItem(i) {
 
 // Checkout button
 document.getElementById("pay-btn").addEventListener("click", async () => {
-
+    const btn = document.getElementById("pay-btn");
     const customerEmail = document.getElementById("customer-email").value.trim();
 
     if (!customerEmail) {
@@ -142,13 +144,16 @@ document.getElementById("pay-btn").addEventListener("click", async () => {
         return;
     }
 
+    // Disable button to prevent double clicks
+    btn.disabled = true;
+    btn.textContent = "Processing...";
+
     const total = cart.reduce((sum, item) =>
         sum + item.price * item.quantity, 0
     );
 
     try {
-
-        const res = await fetch("http://localhost:3000/create-checkout", {
+        const res = await fetch(`${BACKEND_URL}/create-checkout`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -159,30 +164,35 @@ document.getElementById("pay-btn").addEventListener("click", async () => {
             })
         });
 
-        if (!res.ok) {
-            alert("Checkout failed. Try again.");
-            return;
-        }
-
         const data = await res.json();
 
-        console.log("BACKEND RESPONSE:", data);
-
-        if (!data.url) {
-            alert("Checkout failed. Try again.");
+        if (!res.ok) {
+            console.error("SERVER ERROR:", data);
+            alert(`Checkout failed: ${data.error || "Unknown error"}`);
+            btn.disabled = false;
+            btn.textContent = "Pay Securely with SumUp";
             return;
         }
 
+        if (!data.url) {
+            alert("Checkout failed. SumUp did not return a payment link.");
+            btn.disabled = false;
+            btn.textContent = "Pay Securely with SumUp";
+            return;
+        }
+
+        // Success! Redirect to SumUp
         window.location.href = data.url;
 
     } catch (err) {
-        console.error(err);
-        alert("Server error. Please try again later.");
+        console.error("CONNECTION ERROR:", err);
+        alert("Could not connect to the server. Please check your internet or ensure the backend is running.");
+        btn.disabled = false;
+        btn.textContent = "Pay Securely with SumUp";
     }
 });
 
 renderCart();
-
 </script>
 
 </body>
