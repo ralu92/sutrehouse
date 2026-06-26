@@ -4,10 +4,16 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="stylesheet.css">
     </head>
+
     <body>
+
         <header class="site-header">
-            <a href="index.html"><img src="sutre.jpg" class="logo" alt="SutreHouse logo"></a>
+            <a href="index.html">
+                <img src="sutre.jpg" class="logo" alt="SutreHouse logo">
+            </a>
+
             <nav class="main-nav">
+                <a href="index.html">Home</a>
                 <a href="clothing.html">Clothing</a>
                 <a href="bags.html">Bags</a>
                 <a href="accessories.html">Accessories</a>
@@ -19,38 +25,84 @@
         </header>
 
         <main>
+
             <section class="page-hero">
                 <span class="eyebrow">Maison SutreHouse</span>
+
                 <h1>Defined by detail, built for presence.</h1>
-                <p>Explore seasonless collections, anchored by quiet luxury and crafted with intention. Every piece is designed to be worn with confidence.</p>
+
+                <p>
+                    Explore seasonless collections, anchored by quiet luxury
+                    and crafted with intention. Every piece is designed to be
+                    worn with confidence.
+                </p>
             </section>
 
             <section class="section-strap">
-                <p>Shop the collection across clothing, bags, accessories, and limited collaborations.</p>
+                <p>
+                    Shop the collection across clothing, bags, accessories,
+                    and limited collaborations.
+                </p>
             </section>
 
             <section class="gallery">
+
                 <a href="clothing.html" class="gallery-card tall">
                     <img src="sutre.jpg" alt="SutreHouse clothing collection">
                     <div class="card-label">Clothing</div>
                 </a>
+
                 <a href="bags.html" class="gallery-card tall">
                     <img src="sutre.jpg" alt="SutreHouse bags collection">
                     <div class="card-label">Bags</div>
                 </a>
+
                 <a href="accessories.html" class="gallery-card tall">
                     <img src="sutre.jpg" alt="SutreHouse accessories collection">
                     <div class="card-label">Accessories</div>
                 </a>
+
                 <a href="collaborations.html" class="gallery-card tall">
                     <img src="sutre.jpg" alt="SutreHouse collaborations collection">
                     <div class="card-label">Collaborations</div>
                 </a>
+
             </section>
+
         </main>
 
         <footer class="site-footer">
             <p>SutreHouse · Independent fashion house · 2026</p>
         </footer>
+
+        <script>
+
+        function updateCartCount() {
+
+            let cart =
+                JSON.parse(localStorage.getItem("cart")) || [];
+
+            let totalItems =
+                cart.reduce(
+                    (sum, item) => sum + item.quantity,
+                    0
+                );
+
+            const cartCount =
+                document.getElementById("cart-count");
+
+            if (cartCount) {
+                cartCount.textContent = totalItems;
+            }
+
+        }
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            updateCartCount
+        );
+
+        </script>
+
     </body>
 </html>
