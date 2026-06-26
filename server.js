@@ -113,7 +113,8 @@ app.post('/create-checkout', async (req, res) => {
                 merchant_code: process.env.MERCHANT_CODE,
                 description: description || "Sutre House Order",
                 hosted_checkout: { enabled: true },
-                return_url: process.env.RETURN_URL
+                redirect_url: process.env.RETURN_URL, // Changed return_url to redirect_url for the success page link
+                return_url: process.env.WEBHOOK_URL // Added return_url to receive webhook events
             },
             {
                 headers: {
@@ -158,21 +159,44 @@ app.post('/sumup-webhook', async (req, res) => {
 
     const event = req.body;
 
-    if (event.event_type === "checkout.paid") {
+    // Fixed event_type check. SumUp sends "CHECKOUT_STATUS_CHANGED" for checkouts.
+    if (event.event_type === "CHECKOUT_STATUS_CHANGED") {
 
-        const orderId = event.data.checkout_reference;
-
-        await db.read();
-
-        const order = db.data.orders.find(o => o.id == orderId);
-
-        if (order) {
-            order.status = "PAID";
-
-            await db.write();
-
-            await sendAdminEmail(order);
-            await sendCustomerEmail(order);
+        // The webhook payload only contains the checkout ID, we need to fetch the checkout details
+        // to verify if it's actually PAID.
+        const checkoutId = event.id;
+        
+        try {
+            const checkoutResponse = await axios.get(
+                `https://api.sumup.com/v0.1/checkouts/${checkoutId}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${process.env.SUMUP_API_KEY}`
+                    }
+                }
+            );
+            
+            const checkoutData = checkoutResponse.data;
+            
+            if (checkoutData.status === "PAID") {
+                const orderId = checkoutData.checkout_reference;
+                
+                await db.read();
+        
+                const order = db.data.orders.find(o => o.id == orderId);
+        
+                if (order && order.status !== "PAID") {
+                    order.status = "PAID";
+        
+                    await db.write();
+        
+                    await sendAdminEmail(order);
+                    await sendCustomerEmail(order);
+                }
+            }
+        } catch (err) {
+            console.error("Error fetching checkout details in webhook:", err.message);
+            return res.status(500).send("Error processing webhook");
         }
     }
 
