@@ -28,9 +28,43 @@
 
             <section class="product-hero" style="max-width:900px;margin:0 auto;padding:1rem;">
 
-                <img src="denim-jeans.jpg"
-                    alt="Denim Jeans"
-                    style="width:100%;height:100%;object-fit:cover;display:block;">
+<div class="product-gallery">
+
+    <img
+        id="main-image"
+        src="denim-jeans.jpg"
+        alt="Denim Jeans"
+        style="width:100%;height:100%;object-fit:cover;display:block;">
+
+    <div style="display:flex;gap:12px;justify-content:center;margin-top:16px;flex-wrap:wrap;">
+
+        <img
+            src="denim-jeans.jpg"
+            alt="Front View"
+            onclick="changeImage(this)"
+            style="width:90px;height:90px;object-fit:cover;cursor:pointer;border:2px solid #111;border-radius:8px;">
+
+        <img
+            src="denim-jeans-back.jpg"
+            alt="Back View"
+            onclick="changeImage(this)"
+            style="width:90px;height:90px;object-fit:cover;cursor:pointer;border:2px solid #ddd;border-radius:8px;">
+
+        <img
+            src="denim-jeans-side.jpg"
+            alt="Side View"
+            onclick="changeImage(this)"
+            style="width:90px;height:90px;object-fit:cover;cursor:pointer;border:2px solid #ddd;border-radius:8px;">
+
+        <img
+            src="denim-jeans-detail.jpg"
+            alt="Detail View"
+            onclick="changeImage(this)"
+            style="width:90px;height:90px;object-fit:cover;cursor:pointer;border:2px solid #ddd;border-radius:8px;">
+
+    </div>
+
+</div>
 
                 <div style="padding:1rem 0;">
 
