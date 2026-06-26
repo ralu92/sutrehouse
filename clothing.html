@@ -53,4 +53,90 @@
                     <div class="card-copy">
                         <p class="product-type">Denim</p>
                         <h2>Denim Jorts</h2>
-                        <p>Modern denim jorts with a clean leg and elevated finish
+                        <p>Modern denim jorts with a clean leg and elevated finish for a contemporary wardrobe.</p>
+                    </div>
+                </a>
+
+                <a href="denim-jacket.html" class="product-card" aria-label="Denim Jacket">
+                    <span class="product-badge">Signature</span>
+                    <img src="denim-jacket.jpg" alt="Denim Jacket">
+                    <div class="card-copy">
+                        <p class="product-type">Denim</p>
+                        <h2>Denim Jacket</h2>
+                        <p>A structured denim jacket with clean seams, reinforced stitching, and a timeless profile.</p>
+                    </div>
+                </a>
+
+                <a href="suit-jacket.html" class="product-card" aria-label="Signature Suit">
+                    <span class="product-badge">Signature</span>
+                    <img src="sutre.jpg" alt="Signature Suit">
+                    <div class="card-copy">
+                        <p class="product-type">Tailored</p>
+                        <h2>Signature Suit</h2>
+                        <p>A luxury suit inspired by Japanese gakuren styling, balancing sculpted structure and elegant softness.</p>
+                    </div>
+                </a>
+
+                <a href="cotton-jumpers.html" class="product-card" aria-label="Jumper">
+                    <img src="sutre.jpg" alt="Jumper">
+                    <div class="card-copy">
+                        <p class="product-type">Cotton</p>
+                        <h2>Jumper</h2>
+                        <p>Soft, elevated cotton jumpers with refined finishes and a relaxed, luxurious drape.</p>
+                    </div>
+                </a>
+
+                <a href="dress-pants.html" class="product-card" aria-label="Dress Pants">
+                    <img src="sutre.jpg" alt="Dress Pants">
+                    <div class="card-copy">
+                        <p class="product-type">Tailored</p>
+                        <h2>Dress Pants</h2>
+                        <p>Flat-front dress pants with a crisp crease and comfortable stretch for all-day wear.</p>
+                    </div>
+                </a>
+
+                <a href="backless-dress.html" class="product-card" aria-label="Backless Dress">
+                    <img src="sutre.jpg" alt="Backless Dress">
+                    <div class="card-copy">
+                        <p class="product-type">Tailored</p>
+                        <h2>Backless Dress</h2>
+                        <p>A sleek, backless dress with a tailored fit and elegant silhouette.</p>
+                    </div>
+                </a>
+
+            </section>
+
+        </main>
+
+        <footer class="site-footer">
+            <p>SutreHouse · Clothing · Made for the modern wardrobe</p>
+        </footer>
+
+        <script>
+
+        function updateCartCount() {
+
+            let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+            let totalItems = cart.reduce(
+                (sum, item) => sum + item.quantity,
+                0
+            );
+
+            const cartCount = document.getElementById("cart-count");
+
+            if (cartCount) {
+                cartCount.textContent = totalItems;
+            }
+
+        }
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            updateCartCount
+        );
+
+        </script>
+
+    </body>
+</html>
