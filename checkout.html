@@ -1,4 +1,4 @@
-s
+<!DOCTYPE html>
 <html>
     <head>
         <title>Checkout - Sutrehouse</title>
@@ -36,27 +36,11 @@ s
                 <button class="checkout-btn" id="pay-btn">
                 Pay Securely with SumUp
                 </button>
-      </section>  
+      </section>
+        </main>
 
 <!-- 👇 THIS IS WHERE YOUR SCRIPT GOES -->
 <script>
-
-function saveCart() {
-    localStorage.setItem("cart", JSON.stringify(cart));
-}
-
-function updateCartCount() {
-    const cart = JSON.parse(localStorage.getItem("cart")) || [];
-
-    const totalItems = cart.reduce((sum, item) => {
-        return sum + (item.quantity || 1);
-    }, 0);
-
-    const el = document.getElementById("cart-count");
-    if (el) el.textContent = totalItems;
-}
-
-document.addEventListener("DOMContentLoaded", updateCartCount);
 
 // Load cart safely
 let cart = JSON.parse(localStorage.getItem("cart") || "[]");
@@ -67,6 +51,19 @@ cart = cart.map(item => ({
     quantity: item.quantity || 1
 }));
 
+function saveCart() {
+    localStorage.setItem("cart", JSON.stringify(cart));
+}
+
+function updateCartCount() {
+    const totalItems = cart.reduce((sum, item) => {
+        return sum + (item.quantity || 1);
+    }, 0);
+
+    const el = document.getElementById("cart-count");
+    if (el) el.textContent = totalItems;
+}
+
 function renderCart() {
     const container = document.getElementById("cart-container");
     const totalElement = document.getElementById("total");
@@ -75,24 +72,30 @@ function renderCart() {
 
     let total = 0;
 
+    if (cart.length === 0) {
+        container.innerHTML = "<p>Your cart is empty.</p>";
+        totalElement.textContent = "0.00";
+        return;
+    }
+
     cart.forEach((item, index) => {
         total += item.price * item.quantity;
 
-        container.innerHTML += `
-            <div>
-                <strong>${item.name}</strong><br>
-                Size: ${item.size}<br>
-                Fit: ${item.fit}<br>
-                Color: ${item.color || "N/A"}<br>
-                £${item.price}<br>
+        const div = document.createElement("div");
+        div.innerHTML = `
+            <strong>${item.name}</strong><br>
+            Size: ${item.size}<br>
+            Fit: ${item.fit}<br>
+            Color: ${item.color || "N/A"}<br>
+            £${item.price}<br>
 
-                <button onclick="decreaseQty(${index})">-</button>
-                <span>${item.quantity}</span>
-                <button onclick="increaseQty(${index})">+</button>
-                <button onclick="removeItem(${index})">Remove</button>
-                <hr>
-            </div>
+            <button onclick="decreaseQty(${index})">-</button>
+            <span>${item.quantity}</span>
+            <button onclick="increaseQty(${index})">+</button>
+            <button onclick="removeItem(${index})">Remove</button>
+            <hr>
         `;
+        container.appendChild(div);
     });
 
     totalElement.textContent = total.toFixed(2);
@@ -127,10 +130,15 @@ function removeItem(i) {
 // Checkout button
 document.getElementById("pay-btn").addEventListener("click", async () => {
 
-    const customerEmail = document.getElementById("customer-email").value;
+    const customerEmail = document.getElementById("customer-email").value.trim();
 
     if (!customerEmail) {
-        alert("Enter your email");
+        alert("Please enter your email address.");
+        return;
+    }
+
+    if (cart.length === 0) {
+        alert("Your cart is empty.");
         return;
     }
 
@@ -151,6 +159,11 @@ document.getElementById("pay-btn").addEventListener("click", async () => {
             })
         });
 
+        if (!res.ok) {
+            alert("Checkout failed. Try again.");
+            return;
+        }
+
         const data = await res.json();
 
         console.log("BACKEND RESPONSE:", data);
@@ -163,8 +176,8 @@ document.getElementById("pay-btn").addEventListener("click", async () => {
         window.location.href = data.url;
 
     } catch (err) {
-        console.log(err);
-        alert("Server error");
+        console.error(err);
+        alert("Server error. Please try again later.");
     }
 });
 
