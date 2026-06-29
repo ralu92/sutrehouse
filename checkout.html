@@ -1,213 +1,183 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <title>Checkout - Sutrehouse</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="stylesheet.css">
-    </head>
-    <body>
-        <header class="site-header">
-            <a href="index.html"><img src="sutre.jpg" class="logo" alt="SutreHouse logo"></a>
-            <nav class="main-nav">
-                <a href="index.html">Home</a>
-                <a href="clothing.html">Clothing</a>
-                <a href="bags.html">Bags</a>
-                <a href="accessories.html">Accessories</a>
-                <a href="collaborations.html">Collaborations</a>
-            </nav>
-        </header>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Checkout - Sutrehouse</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="stylesheet.css">
+    <style>
+        .error-message { color: #d9534f; background: #f2dede; padding: 10px; border-radius: 4px; margin: 10px 0; display: none; }
+        .loading-spinner { display: inline-block; width: 20px; height: 20px; border: 3px solid rgba(255,255,255,.3); border-radius: 50%; border-top-color: #fff; animation: spin 1s ease-in-out infinite; margin-right: 10px; vertical-align: middle; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .checkout-btn:disabled { opacity: 0.7; cursor: not-allowed; }
+    </style>
+</head>
+<body>
+    <header class="site-header">
+        <a href="index.html"><img src="sutre.jpg" class="logo" alt="SutreHouse logo"></a>
+        <nav class="main-nav">
+            <a href="index.html">Home</a>
+            <a href="clothing.html">Clothing</a>
+            <a href="bags.html">Bags</a>
+            <a href="accessories.html">Accessories</a>
+            <a href="collaborations.html">Collaborations</a>
+        </nav>
+    </header>
 
-        <main>
+    <main>
         <section class="page-hero">
-                <span class="eyebrow">Checkout</span>
-                <h1>Your Cart</h1>
-                <p>Review your items and proceed to payment.</p>
+            <span class="eyebrow">Checkout</span>
+            <h1>Your Cart</h1>
+            <p>Review your items and proceed to payment.</p>
 
-                <div id="cart-container"></div>
+            <div id="error-box" class="error-message"></div>
+            <div id="cart-container"></div>
 
-                <h2>Total: £<span id="total">0.00</span></h2>
+            <h2>Total: £<span id="total">0.00</span></h2>
 
+            <div style="max-width: 400px; margin: 0 auto; text-align: left;">
                 <label for="customerName">Full Name</label>
-                <input
-                    type="text"
-                    id="customerName"
-                    placeholder="Enter your full name"
-                    required
-                    style="padding:10px;width:100%;margin:10px 0;"
-                >
+                <input type="text" id="customerName" placeholder="Enter your full name" required style="padding:10px;width:100%;margin:10px 0;box-sizing: border-box;">
 
                 <label for="customer-email">Email Address</label>
-                <input
-                    type="email"
-                    id="customer-email"
-                    placeholder="Enter your email"
-                    required
-                    style="padding:10px;width:100%;margin:10px 0;"
-                >
+                <input type="email" id="customer-email" placeholder="Enter your email" required style="padding:10px;width:100%;margin:10px 0;box-sizing: border-box;">
 
-                <button class="checkout-btn" id="pay-btn">
-                Pay Securely with SumUp
+                <button class="checkout-btn" id="pay-btn" style="width: 100%; padding: 15px; background: #333; color: #fff; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; margin-top: 20px;">
+                    Pay Securely with SumUp
                 </button>
-             
-      </section>
-        </main>
+            </div>
+        </section>
+    </main>
 
-<script>
-// --- CONFIGURATION ---
-// REPLACE THIS with your actual Render URL (e.g., https://your-service.onrender.com)
-const BACKEND_URL = "https://sutrehouse-backend.onrender.com"; 
+    <script>
+        // --- CONFIGURATION ---
+        // IMPORTANT: Update this to your actual backend URL
+        const BACKEND_URL = "https://sutrehouse-backend.onrender.com"; 
 
-// Load cart safely
-let cart = JSON.parse(localStorage.getItem("cart") || "[]");
+        let cart = JSON.parse(localStorage.getItem("cart") || "[]");
+        cart = cart.map(item => ({ ...item, quantity: item.quantity || 1 }));
 
-// Ensure quantity exists
-cart = cart.map(item => ({
-    ...item,
-    quantity: item.quantity || 1
-}));
+        function saveCart() {
+            localStorage.setItem("cart", JSON.stringify(cart));
+        }
 
-function saveCart() {
-    localStorage.setItem("cart", JSON.stringify(cart));
-}
+        function renderCart() {
+            const container = document.getElementById("cart-container");
+            const totalElement = document.getElementById("total");
+            const errorBox = document.getElementById("error-box");
+            
+            container.innerHTML = "";
+            let total = 0;
 
-function updateCartCount() {
-    const totalItems = cart.reduce((sum, item) => {
-        return sum + (item.quantity || 1);
-    }, 0);
+            if (cart.length === 0) {
+                container.innerHTML = "<p>Your cart is empty.</p>";
+                totalElement.textContent = "0.00";
+                document.getElementById("pay-btn").disabled = true;
+                return;
+            }
 
-    const el = document.getElementById("cart-count");
-    if (el) el.textContent = totalItems;
-}
+            cart.forEach((item, index) => {
+                total += item.price * item.quantity;
+                const div = document.createElement("div");
+                div.style.borderBottom = "1px solid #eee";
+                div.style.padding = "10px 0";
+                div.innerHTML = `
+                    <strong>${item.name}</strong> (Size: ${item.size}, Fit: ${item.fit})<br>
+                    £${item.price.toFixed(2)} x ${item.quantity}
+                    <div style="margin-top: 5px;">
+                        <button onclick="changeQty(${index}, -1)">-</button>
+                        <span style="margin: 0 10px;">${item.quantity}</span>
+                        <button onclick="changeQty(${index}, 1)">+</button>
+                        <button onclick="removeItem(${index})" style="margin-left: 20px; color: red; border: none; background: none; cursor: pointer;">Remove</button>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
 
-function renderCart() {
-    const container = document.getElementById("cart-container");
-    const totalElement = document.getElementById("total");
+            totalElement.textContent = total.toFixed(2);
+            saveCart();
+        }
 
-    container.innerHTML = "";
+        function changeQty(index, delta) {
+            cart[index].quantity += delta;
+            if (cart[index].quantity <= 0) cart.splice(index, 1);
+            renderCart();
+        }
 
-    let total = 0;
+        function removeItem(index) {
+            cart.splice(index, 1);
+            renderCart();
+        }
 
-    if (cart.length === 0) {
-        container.innerHTML = "<p>Your cart is empty.</p>";
-        totalElement.textContent = "0.00";
-        return;
-    }
+        function showError(msg) {
+            const errorBox = document.getElementById("error-box");
+            errorBox.textContent = msg;
+            errorBox.style.display = "block";
+            window.scrollTo(0, 0);
+        }
 
-    cart.forEach((item, index) => {
-        total += item.price * item.quantity;
+        document.getElementById("pay-btn").addEventListener("click", async () => {
+            const btn = document.getElementById("pay-btn");
+            const name = document.getElementById("customerName").value.trim();
+            const email = document.getElementById("customer-email").value.trim();
+            const errorBox = document.getElementById("error-box");
 
-        const div = document.createElement("div");
-        div.innerHTML = `
-            <strong>${item.name}</strong><br>
-            Size: ${item.size}<br>
-            Fit: ${item.fit}<br>
-            Color: ${item.color || "N/A"}<br>
-            £${item.price}<br>
+            errorBox.style.display = "none";
 
-            <button onclick="decreaseQty(${index})">-</button>
-            <span>${item.quantity}</span>
-            <button onclick="increaseQty(${index})">+</button>
-            <button onclick="removeItem(${index})">Remove</button>
-            <hr>
-        `;
-        container.appendChild(div);
-    });
+            if (!name || !email) {
+                showError("Please enter your name and email address.");
+                return;
+            }
 
-    totalElement.textContent = total.toFixed(2);
+            if (cart.length === 0) {
+                showError("Your cart is empty.");
+                return;
+            }
 
-    saveCart();
-    updateCartCount();
-}
+            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            
+            // SumUp Minimum Amount Check (usually 1.00 GBP)
+            if (total < 1.00) {
+                showError("Minimum order amount is £1.00.");
+                return;
+            }
 
-function increaseQty(i) {
-    cart[i].quantity++;
-    saveCart();
-    renderCart();
-}
+            btn.disabled = true;
+            btn.innerHTML = '<span class="loading-spinner"></span>Processing...';
 
-function decreaseQty(i) {
-    if (cart[i].quantity > 1) {
-        cart[i].quantity--;
-    } else {
-        cart.splice(i, 1);
-    }
+            try {
+                const response = await fetch(`${BACKEND_URL}/create-checkout`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        amount: total.toFixed(2),
+                        customerName: name,
+                        customerEmail: email,
+                        items: cart
+                    })
+                });
 
-    saveCart();
-    renderCart();
-}
+                const data = await response.json();
 
-function removeItem(i) {
-    cart.splice(i, 1);
-    saveCart();
-    renderCart();
-}
+                if (!response.ok) {
+                    throw new Error(data.details || data.error || "Server error");
+                }
 
-// Checkout button
-document.getElementById("pay-btn").addEventListener("click", async () => {
-    const btn = document.getElementById("pay-btn");
-    const customerEmail = document.getElementById("customer-email").value.trim();
+                if (data.url) {
+                    window.location.href = data.url;
+                } else {
+                    throw new Error("No payment URL received from SumUp.");
+                }
 
-    if (!customerEmail) {
-        alert("Please enter your email address.");
-        return;
-    }
-
-    if (cart.length === 0) {
-        alert("Your cart is empty.");
-        return;
-    }
-
-    // Disable button to prevent double clicks
-    btn.disabled = true;
-    btn.textContent = "Processing...";
-
-    const total = cart.reduce((sum, item) =>
-        sum + item.price * item.quantity, 0
-    );
-
-    try {
-        const res = await fetch(`${BACKEND_URL}/create-checkout`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-body: JSON.stringify({
-    amount: total,
-    description: "Sutre House Order",
-    items: cart,
-    customerName: document.getElementById("customerName").value,
-    customerEmail: document.getElementById("customer-email").value
-})
+            } catch (err) {
+                console.error("Checkout Error:", err);
+                showError(`Checkout not available: ${err.message}`);
+                btn.disabled = false;
+                btn.textContent = "Pay Securely with SumUp";
+            }
         });
 
-        const data = await res.json();
-
-        if (!res.ok) {
-            console.error("SERVER ERROR:", data);
-            alert(`Checkout failed: ${data.error || "Unknown error"}`);
-            btn.disabled = false;
-            btn.textContent = "Pay Securely with SumUp";
-            return;
-        }
-
-        if (!data.url) {
-            alert("Checkout failed. SumUp did not return a payment link.");
-            btn.disabled = false;
-            btn.textContent = "Pay Securely with SumUp";
-            return;
-        }
-
-        // Success! Redirect to SumUp
-        window.location.href = data.url;
-
-    } catch (err) {
-        console.error("CONNECTION ERROR:", err);
-        alert("Could not connect to the server. Please check your internet or ensure the backend is running.");
-        btn.disabled = false;
-        btn.textContent = "Pay Securely with SumUp";
-    }
-});
-
-renderCart();
-</script>
-
+        renderCart();
+    </script>
 </body>
 </html>
