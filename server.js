@@ -8,15 +8,12 @@ const fs = require("fs");
 const path = require("path");
 const { v4: uuidv4 } = require("uuid");
 
-/**
- * NOTE: lowdb v4+ is ESM-only. 
- * To maintain CommonJS (require) compatibility and ensure stability, 
- * I've implemented a simple JSON-based database handler.
- */
 const DB_PATH = path.join(__dirname, "db.json");
 
+/* ---------------- SIMPLE DB ---------------- */
 const db = {
     data: { orders: [] },
+
     async read() {
         try {
             if (fs.existsSync(DB_PATH)) {
@@ -24,38 +21,34 @@ const db = {
                 this.data = JSON.parse(content);
             }
         } catch (err) {
-            console.error("Error reading database:", err);
+            console.error("DB read error:", err);
         }
     },
+
     async write() {
         try {
             fs.writeFileSync(DB_PATH, JSON.stringify(this.data, null, 2));
         } catch (err) {
-            console.error("Error writing to database:", err);
+            console.error("DB write error:", err);
         }
     }
 };
 
 const app = express();
-
 app.use(cors());
 app.use(express.json());
 
-/* ---------------- MEMORY STORAGE ---------------- */
+/* ---------------- MEMORY ---------------- */
 const pendingOrders = {};
 
-/**
- * PROMO CODES CONFIGURATION
- * You can manage these in a separate JSON or DB, 
- * but for now, they are defined here.
- */
+/* ---------------- PROMO CODES ---------------- */
 const PROMO_CODES = {
-    "WELCOME10": { type: "PERCENT", value: 10 }, // 10% off
-    "SUTRE5": { type: "FIXED", value: 5.00 },    // £5 off
-    "MANUS": { type: "PERCENT", value: 100 }     // Free (for testing)
+    "WELCOME10": { type: "PERCENT", value: 10 },
+    "SUTRE5": { type: "FIXED", value: 5 },
+    "MANUS": { type: "PERCENT", value: 100 }
 };
 
-/* ---------------- EMAIL SETUP ---------------- */
+/* ---------------- EMAIL ---------------- */
 const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
@@ -64,7 +57,6 @@ const transporter = nodemailer.createTransport({
     }
 });
 
-/* ---------------- EMAIL TEMPLATE ---------------- */
 function generateEmail(order, isAdmin = false) {
     return `
         <h2>${isAdmin ? "New Order Received" : "Order Confirmation"}</h2>
@@ -76,16 +68,16 @@ function generateEmail(order, isAdmin = false) {
     `;
 }
 
-/* ---------------- VALIDATE PROMO CODE ---------------- */
+/* ---------------- PROMO VALIDATION ---------------- */
 app.post("/validate-promo", (req, res) => {
     const { code } = req.body;
     const promo = PROMO_CODES[code?.toUpperCase()];
 
-    if (promo) {
-        res.json({ valid: true, ...promo });
-    } else {
-        res.status(404).json({ valid: false, message: "Invalid promo code" });
+    if (!promo) {
+        return res.status(404).json({ valid: false });
     }
+
+    res.json({ valid: true, ...promo });
 });
 
 /* ---------------- CREATE CHECKOUT ---------------- */
@@ -94,22 +86,21 @@ app.post("/create-checkout", async (req, res) => {
         const { customerName, customerEmail, amount, items, promoCode } = req.body;
 
         if (!customerName || !customerEmail || !amount || !items) {
-            return res.status(400).json({ error: "Missing required fields: customerName, customerEmail, amount, or items" });
+            return res.status(400).json({ error: "Missing fields" });
         }
 
         let finalAmount = parseFloat(amount);
-        let discountApplied = 0;
+        let discount = 0;
 
-        // Apply Promo Code if provided
         if (promoCode) {
             const promo = PROMO_CODES[promoCode.toUpperCase()];
             if (promo) {
                 if (promo.type === "PERCENT") {
-                    discountApplied = (finalAmount * promo.value) / 100;
-                } else if (promo.type === "FIXED") {
-                    discountApplied = promo.value;
+                    discount = (finalAmount * promo.value) / 100;
+                } else {
+                    discount = promo.value;
                 }
-                finalAmount = Math.max(0, finalAmount - discountApplied);
+                finalAmount = Math.max(0, finalAmount - discount);
             }
         }
 
@@ -120,7 +111,7 @@ app.post("/create-checkout", async (req, res) => {
             customerName,
             customerEmail,
             originalAmount: parseFloat(amount),
-            discount: discountApplied,
+            discount,
             amount: parseFloat(finalAmount.toFixed(2)),
             promoCode: promoCode?.toUpperCase(),
             items,
@@ -128,44 +119,43 @@ app.post("/create-checkout", async (req, res) => {
             createdAt: new Date().toISOString()
         };
 
-        // Store in memory
         pendingOrders[orderId] = order;
 
-        // Store in DB
         await db.read();
         db.data.orders.push(order);
         await db.write();
 
-        // IF ORDER IS FREE (£0.00), BYPASS SUMUP
+        /* FREE ORDER */
         if (finalAmount <= 0) {
-            console.log(`Processing Free Order ID: ${orderId}`);
-            
-            // Mark as PAID immediately in DB
             order.status = "PAID";
             order.paidAt = new Date().toISOString();
             await db.write();
 
-            // Return success URL (your frontend success page)
-            const successUrl = `${process.env.RETURN_URL || "/success"}?orderId=${orderId}`;
-            return res.json({ url: successUrl, free: true });
+            return res.json({
+                url: `${process.env.RETURN_URL || "/success"}?orderId=${orderId}`,
+                free: true
+            });
         }
-
-        console.log(`Creating SumUp checkout for Order ID: ${orderId}`);
 
         const sumupPayload = {
             checkout_reference: orderId,
             amount: parseFloat(finalAmount.toFixed(2)),
             currency: "GBP",
             description: "Sutre House Order",
-            hosted_checkout: {
-                enabled: true
-            }
+            hosted_checkout: { enabled: true }
         };
 
-        // Optional but recommended fields
-        if (process.env.MERCHANT_CODE) sumupPayload.merchant_code = process.env.MERCHANT_CODE;
-        if (process.env.RETURN_URL) sumupPayload.return_url = `${process.env.RETURN_URL}?orderId=${orderId}`;
-        if (process.env.EMAIL) sumupPayload.pay_to_email = process.env.EMAIL;
+        if (process.env.MERCHANT_CODE) {
+            sumupPayload.merchant_code = process.env.MERCHANT_CODE;
+        }
+
+        if (process.env.RETURN_URL) {
+            sumupPayload.return_url = `${process.env.RETURN_URL}?orderId=${orderId}`;
+        }
+
+        if (process.env.EMAIL) {
+            sumupPayload.pay_to_email = process.env.EMAIL;
+        }
 
         const response = await axios.post(
             "https://api.sumup.com/v0.1/checkouts",
@@ -181,103 +171,94 @@ app.post("/create-checkout", async (req, res) => {
         const url = response.data?.hosted_checkout_url;
 
         if (!url) {
-            console.error("SumUp Response Error:", response.data);
-            throw new Error("No checkout URL returned from SumUp");
+            throw new Error("No checkout URL returned");
         }
 
         res.json({ url });
 
     } catch (err) {
-        const errorDetail = err.response?.data || err.message;
-        console.error("Checkout error details:", JSON.stringify(errorDetail, null, 2));
-        
-        // Return a more descriptive error if available
-        res.status(500).json({ 
-            error: "Checkout failed", 
-            details: typeof errorDetail === 'object' ? 
-                     (errorDetail.message || errorDetail.error_code || JSON.stringify(errorDetail)) : 
-                     errorDetail 
-        });
+        console.error("Checkout error:", err.response?.data || err.message);
+        res.status(500).json({ error: "Checkout failed" });
     }
 });
 
-/* ---------------- SUCCESS ROUTE ---------------- */
-app.get("/success", async (req, res) => {
+/* ---------------- SUCCESS PAGE (ONLY UI NOW) ---------------- */
+app.get("/success", (req, res) => {
     const { orderId } = req.query;
 
+    res.send(`
+        <h1>Payment complete</h1>
+        <p>Processing order...</p>
+
+        <script>
+         fetch("https://sutrehouse-backend.onrender.com/confirm-payment", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ orderId: "${orderId}" })
+            });
+        </script>
+    `);
+});
+
+/* ---------------- CONFIRM PAYMENT (🔥 MAIN FIX) ---------------- */
+app.post("/confirm-payment", async (req, res) => {
+    const { orderId } = req.body;
+
     if (!orderId) {
-        return res.status(400).send("<h1>Missing Order ID</h1>");
+        return res.status(400).json({ error: "Missing orderId" });
     }
 
-    // Fallback to DB if memory is lost
-    let order = pendingOrders[orderId];
-
-    if (!order) {
-        await db.read();
-        order = db.data.orders.find(o => o.id === orderId);
-    }
+    await db.read();
+    const order = db.data.orders.find(o => o.id === orderId);
 
     if (!order) {
-        return res.status(404).send("<h1>Order not found or expired</h1>");
+        return res.status(404).json({ error: "Order not found" });
     }
+
+    if (order.status === "PAID") {
+        return res.json({ ok: true, alreadyProcessed: true });
+    }
+
+    order.status = "PAID";
+    order.paidAt = new Date().toISOString();
+    await db.write();
 
     try {
-        // Update DB status
-        await db.read();
-        const dbOrder = db.data.orders.find(o => o.id === orderId);
+        console.log("Sending emails for:", orderId);
 
-        if (dbOrder && dbOrder.status !== "PAID") {
-            dbOrder.status = "PAID";
-            dbOrder.paidAt = new Date().toISOString();
-            await db.write();
+        const adminEmail = await transporter.sendMail({
+            from: process.env.EMAIL,
+            to: process.env.EMAIL,
+            subject: "New Order Paid",
+            html: generateEmail(order, true)
+        });
 
-            // Send admin email
-            await transporter.sendMail({
-                from: process.env.EMAIL,
-                to: process.env.EMAIL,
-                subject: "New SutreHouse Order Paid",
-                html: generateEmail(order, true)
-            }).catch(e => console.error("Admin Email Error:", e.message));
+        console.log("Admin email sent:", adminEmail.messageId);
 
-            // Send customer email
-            await transporter.sendMail({
-                from: process.env.EMAIL,
-                to: order.customerEmail,
-                subject: "Your SutreHouse Order Confirmation",
-                html: generateEmail(order, false)
-            }).catch(e => console.error("Customer Email Error:", e.message));
-        }
+        const customerEmail = await transporter.sendMail({
+            from: process.env.EMAIL,
+            to: order.customerEmail,
+            subject: "Your Order Confirmation",
+            html: generateEmail(order, false)
+        });
 
-        // Remove from memory
+        console.log("Customer email sent:", customerEmail.messageId);
+
         delete pendingOrders[orderId];
 
-        res.send(`
-            <div style="font-family:Arial;text-align:center;padding:50px;">
-                <h1 style="color: #4CAF50;">Payment Successful ✅</h1>
-                <p>Thank you for your order, <strong>${order.customerName}</strong>.</p>
-                <p>Order ID: ${order.id}</p>
-                <br>
-                <a href="/" style="text-decoration:none; background:#333; color:#fff; padding:10px 20px; border-radius:5px;">Return to shop</a>
-            </div>
-        `);
+        return res.json({ ok: true });
 
     } catch (err) {
-        console.error("Success Route Error:", err);
-        res.status(500).send("Error processing order completion");
+        console.error("EMAIL ERROR:", err);
+        return res.status(500).json({ error: "Email sending failed" });
     }
 });
 
 /* ---------------- START SERVER ---------------- */
 const PORT = process.env.PORT || 3000;
 
-// Initialize DB and then start server
 db.read().then(() => {
     app.listen(PORT, () => {
-        console.log(`🚀 Server running on port ${PORT}`);
-        console.log(`Environment check:`);
-        console.log(`- SUMUP_TOKEN: ${process.env.SUMUP_TOKEN ? "✅ Set" : "❌ Missing"}`);
-        console.log(`- MERCHANT_CODE: ${process.env.MERCHANT_CODE || "❌ Missing (Optional but recommended)"}`);
-        console.log(`- RETURN_URL: ${process.env.RETURN_URL || "❌ Missing"}`);
-        console.log(`- EMAIL: ${process.env.EMAIL || "❌ Missing"}`);
+        console.log("🚀 Server running on port", PORT);
     });
 });
