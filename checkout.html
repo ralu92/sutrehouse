@@ -26,6 +26,14 @@
                 <div id="cart-container"></div>
 
                 <h2>Total: £<span id="total">0.00</span></h2>
+
+                <input
+                    type="text"
+                    id="customerName"
+                    placeholder="enter your full name"
+                    required
+                    style="padding:10px;width:100%;margin:10px 0;"
+                >
                 <input
                     type="email"
                     id="customer-email"
@@ -36,6 +44,8 @@
                 <button class="checkout-btn" id="pay-btn">
                 Pay Securely with SumUp
                 </button>
+
+                
       </section>
         </main>
 
@@ -156,12 +166,13 @@ document.getElementById("pay-btn").addEventListener("click", async () => {
         const res = await fetch(`${BACKEND_URL}/create-checkout`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                amount: total,
-                description: "Sutre House Order",
-                items: cart,
-                customerEmail
-            })
+body: JSON.stringify({
+    amount: total,
+    description: "Sutre House Order",
+    items: cart,
+    customerName: document.getElementById("customerName").value,
+    customerEmail: document.getElementById("customer-email").value
+})
         });
 
         const data = await res.json();
