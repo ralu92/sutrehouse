@@ -100,10 +100,16 @@ app.post("/create-checkout", async (req, res) => {
             checkout_reference: orderId,
             amount: parseFloat(amount),
             currency: "GBP",
-            pay_to_email: process.env.EMAIL, // Often required by SumUp
             description: "Sutre House Order",
-            return_url: `${process.env.RETURN_URL}?orderId=${orderId}`
+            hosted_checkout: {
+                enabled: true
+            }
         };
+
+        // Optional but recommended fields
+        if (process.env.MERCHANT_CODE) sumupPayload.merchant_code = process.env.MERCHANT_CODE;
+        if (process.env.RETURN_URL) sumupPayload.return_url = `${process.env.RETURN_URL}?orderId=${orderId}`;
+        if (process.env.EMAIL) sumupPayload.pay_to_email = process.env.EMAIL;
 
         const response = await axios.post(
             "https://api.sumup.com/v0.1/checkouts",
@@ -132,7 +138,9 @@ app.post("/create-checkout", async (req, res) => {
         // Return a more descriptive error if available
         res.status(500).json({ 
             error: "Checkout failed", 
-            details: typeof errorDetail === 'object' ? errorDetail.message || "Internal SumUp Error" : errorDetail 
+            details: typeof errorDetail === 'object' ? 
+                     (errorDetail.message || errorDetail.error_code || JSON.stringify(errorDetail)) : 
+                     errorDetail 
         });
     }
 });
@@ -212,6 +220,7 @@ db.read().then(() => {
         console.log(`🚀 Server running on port ${PORT}`);
         console.log(`Environment check:`);
         console.log(`- SUMUP_TOKEN: ${process.env.SUMUP_TOKEN ? "✅ Set" : "❌ Missing"}`);
+        console.log(`- MERCHANT_CODE: ${process.env.MERCHANT_CODE || "❌ Missing (Optional but recommended)"}`);
         console.log(`- RETURN_URL: ${process.env.RETURN_URL || "❌ Missing"}`);
         console.log(`- EMAIL: ${process.env.EMAIL || "❌ Missing"}`);
     });
