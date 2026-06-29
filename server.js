@@ -126,6 +126,7 @@ async function sendAdminEmail(order) {
 
 app.post('/create-checkout', async (req, res) => {
     try {
+        const { customerName, customerEmail, amount, items } = req.body;
         const { amount, description, items, customerEmail } = req.body;
         if (!amount || !items || !customerEmail) {
             return res.status(400).json({ error: "Missing required fields" });
