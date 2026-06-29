@@ -52,7 +52,7 @@ const pendingOrders = {};
 const PROMO_CODES = {
     "WELCOME10": { type: "PERCENT", value: 10 }, // 10% off
     "SUTRE5": { type: "FIXED", value: 5.00 },    // £5 off
-    "MANUS": { type: "PERCENT", value: 100 }     // Free (for testing)
+    "MANUS": { type: "PERCENT", value: 100 },    // Free (for testing)
 };
 
 /* ---------------- EMAIL SETUP ---------------- */
