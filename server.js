@@ -51,7 +51,8 @@ const pendingOrders = {};
  */
 const PROMO_CODES = {
     "WELCOME10": { type: "PERCENT", value: 10 }, // 10% off
-    "SUTRE92": { type: "FIXED", value: 20.00 },    // £20 off
+    "SUTRE5": { type: "FIXED", value: 5.00 },    // £5 off
+    "MANUS": { type: "PERCENT", value: 100 }     // Free (for testing)
 };
 
 /* ---------------- EMAIL SETUP ---------------- */
@@ -134,6 +135,20 @@ app.post("/create-checkout", async (req, res) => {
         await db.read();
         db.data.orders.push(order);
         await db.write();
+
+        // IF ORDER IS FREE (£0.00), BYPASS SUMUP
+        if (finalAmount <= 0) {
+            console.log(`Processing Free Order ID: ${orderId}`);
+            
+            // Mark as PAID immediately in DB
+            order.status = "PAID";
+            order.paidAt = new Date().toISOString();
+            await db.write();
+
+            // Return success URL (your frontend success page)
+            const successUrl = `${process.env.RETURN_URL || "/success"}?orderId=${orderId}`;
+            return res.json({ url: successUrl, free: true });
+        }
 
         console.log(`Creating SumUp checkout for Order ID: ${orderId}`);
 

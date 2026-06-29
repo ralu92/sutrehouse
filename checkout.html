@@ -96,7 +96,7 @@
                 div.style.borderBottom = "1px solid #eee";
                 div.style.padding = "10px 0";
                 div.innerHTML = `
-                    <strong>${item.name}</strong> (${item.size},${item.fit})<br>
+                    <strong>${item.name}</strong> (Size: ${item.size}, Fit: ${item.fit})<br>
                     £${item.price.toFixed(2)} x ${item.quantity}
                     <div style="margin-top: 5px;">
                         <button onclick="changeQty(${index}, -1)">-</button>
@@ -209,7 +209,7 @@
             
             // SumUp Minimum Amount Check (usually 1.00 GBP)
             if (total < 1.00) {
-                showError("Minimum order amount is £0.00.");
+                showError("Minimum order amount is £1.00.");
                 return;
             }
 
