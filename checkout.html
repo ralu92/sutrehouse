@@ -33,6 +33,19 @@
             <div id="error-box" class="error-message"></div>
             <div id="cart-container"></div>
 
+            <div style="max-width: 400px; margin: 20px auto; border: 1px solid #ddd; padding: 15px; border-radius: 8px; text-align: left;">
+                <label for="promoCode" style="font-weight: bold; display: block; margin-bottom: 5px;">Promo Code</label>
+                <div style="display: flex; gap: 10px;">
+                    <input type="text" id="promoCode" placeholder="Enter code" style="flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
+                    <button id="apply-promo-btn" style="padding: 10px 20px; background: #333; color: #fff; border: none; border-radius: 4px; cursor: pointer;">Apply</button>
+                </div>
+                <p id="promo-message" style="margin-top: 10px; font-size: 0.9em; display: none;"></p>
+            </div>
+
+            <div id="discount-display" style="display: none; color: #4CAF50; font-weight: bold; margin-bottom: 10px;">
+                Discount: -£<span id="discount-amount">0.00</span>
+            </div>
+
             <h2>Total: £<span id="total">0.00</span></h2>
 
             <div style="max-width: 400px; margin: 0 auto; text-align: left;">
@@ -55,6 +68,7 @@
         const BACKEND_URL = "https://sutrehouse-backend.onrender.com"; 
 
         let cart = JSON.parse(localStorage.getItem("cart") || "[]");
+        let appliedPromo = null;
         cart = cart.map(item => ({ ...item, quantity: item.quantity || 1 }));
 
         function saveCart() {
@@ -94,9 +108,66 @@
                 container.appendChild(div);
             });
 
-            totalElement.textContent = total.toFixed(2);
+            let finalTotal = total;
+            if (appliedPromo) {
+                if (appliedPromo.type === "PERCENT") {
+                    const discount = (total * appliedPromo.value) / 100;
+                    finalTotal = total - discount;
+                    document.getElementById("discount-amount").textContent = discount.toFixed(2);
+                } else if (appliedPromo.type === "FIXED") {
+                    finalTotal = Math.max(0, total - appliedPromo.value);
+                    document.getElementById("discount-amount").textContent = appliedPromo.value.toFixed(2);
+                }
+                document.getElementById("discount-display").style.display = "block";
+            } else {
+                document.getElementById("discount-display").style.display = "none";
+            }
+
+            totalElement.textContent = Math.max(0, finalTotal).toFixed(2);
             saveCart();
         }
+
+        // --- PROMO CODE LOGIC ---
+        document.getElementById("apply-promo-btn").addEventListener("click", async () => {
+            const codeInput = document.getElementById("promoCode");
+            const code = codeInput.value.trim();
+            const msg = document.getElementById("promo-message");
+            const btn = document.getElementById("apply-promo-btn");
+
+            if (!code) return;
+
+            btn.disabled = true;
+            btn.textContent = "...";
+
+            try {
+                const response = await fetch(`${BACKEND_URL}/validate-promo`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ code })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.valid) {
+                    appliedPromo = { code, ...data };
+                    msg.textContent = `Success! ${code} applied.`;
+                    msg.style.color = "#4CAF50";
+                    msg.style.display = "block";
+                    renderCart();
+                } else {
+                    throw new Error(data.message || "Invalid code");
+                }
+            } catch (err) {
+                appliedPromo = null;
+                msg.textContent = err.message;
+                msg.style.color = "#d9534f";
+                msg.style.display = "block";
+                renderCart();
+            } finally {
+                btn.disabled = false;
+                btn.textContent = "Apply";
+            }
+        });
 
         function changeQty(index, delta) {
             cart[index].quantity += delta;
@@ -153,7 +224,8 @@
                         amount: total.toFixed(2),
                         customerName: name,
                         customerEmail: email,
-                        items: cart
+                        items: cart,
+                        promoCode: appliedPromo ? appliedPromo.code : null
                     })
                 });
 

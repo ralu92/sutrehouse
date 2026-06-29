@@ -44,6 +44,17 @@ app.use(express.json());
 /* ---------------- MEMORY STORAGE ---------------- */
 const pendingOrders = {};
 
+/**
+ * PROMO CODES CONFIGURATION
+ * You can manage these in a separate JSON or DB, 
+ * but for now, they are defined here.
+ */
+const PROMO_CODES = {
+    "WELCOME10": { type: "PERCENT", value: 10 }, // 10% off
+    "SUTRE5": { type: "FIXED", value: 5.00 },    // £5 off
+    "MANUS": { type: "PERCENT", value: 100 }     // Free (for testing)
+};
+
 /* ---------------- EMAIL SETUP ---------------- */
 const transporter = nodemailer.createTransport({
     service: "gmail",
@@ -65,13 +76,41 @@ function generateEmail(order, isAdmin = false) {
     `;
 }
 
+/* ---------------- VALIDATE PROMO CODE ---------------- */
+app.post("/validate-promo", (req, res) => {
+    const { code } = req.body;
+    const promo = PROMO_CODES[code?.toUpperCase()];
+
+    if (promo) {
+        res.json({ valid: true, ...promo });
+    } else {
+        res.status(404).json({ valid: false, message: "Invalid promo code" });
+    }
+});
+
 /* ---------------- CREATE CHECKOUT ---------------- */
 app.post("/create-checkout", async (req, res) => {
     try {
-        const { customerName, customerEmail, amount, items } = req.body;
+        const { customerName, customerEmail, amount, items, promoCode } = req.body;
 
         if (!customerName || !customerEmail || !amount || !items) {
             return res.status(400).json({ error: "Missing required fields: customerName, customerEmail, amount, or items" });
+        }
+
+        let finalAmount = parseFloat(amount);
+        let discountApplied = 0;
+
+        // Apply Promo Code if provided
+        if (promoCode) {
+            const promo = PROMO_CODES[promoCode.toUpperCase()];
+            if (promo) {
+                if (promo.type === "PERCENT") {
+                    discountApplied = (finalAmount * promo.value) / 100;
+                } else if (promo.type === "FIXED") {
+                    discountApplied = promo.value;
+                }
+                finalAmount = Math.max(0, finalAmount - discountApplied);
+            }
         }
 
         const orderId = uuidv4();
@@ -80,7 +119,10 @@ app.post("/create-checkout", async (req, res) => {
             id: orderId,
             customerName,
             customerEmail,
-            amount: parseFloat(amount),
+            originalAmount: parseFloat(amount),
+            discount: discountApplied,
+            amount: parseFloat(finalAmount.toFixed(2)),
+            promoCode: promoCode?.toUpperCase(),
             items,
             status: "PENDING",
             createdAt: new Date().toISOString()
@@ -98,7 +140,7 @@ app.post("/create-checkout", async (req, res) => {
 
         const sumupPayload = {
             checkout_reference: orderId,
-            amount: parseFloat(amount),
+            amount: parseFloat(finalAmount.toFixed(2)),
             currency: "GBP",
             description: "Sutre House Order",
             hosted_checkout: {
