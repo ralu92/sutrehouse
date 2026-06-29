@@ -66,8 +66,10 @@ app.post("/create-checkout", async (req, res) => {
             status: "PENDING"
         };
 
+        // store in memory
         pendingOrders[orderId] = order;
 
+        // store in DB
         await db.read();
         db.data.orders.push(order);
         await db.write();
@@ -79,11 +81,14 @@ app.post("/create-checkout", async (req, res) => {
                 amount: Number(amount),
                 currency: "GBP",
                 description: "Sutre House Order",
-                return_url: `${process.env.RETURN_URL}/success?orderId=${orderId}`
+
+                // ✅ FIXED RETURN URL
+                return_url: `${process.env.RETURN_URL}?orderId=${orderId}`
             },
             {
                 headers: {
-                    Authorization: `Bearer ${process.env.SUMUP_API_KEY}`,
+                    // ✅ FIXED AUTH HEADER
+                    Authorization: `Bearer ${process.env.SUMUP_TOKEN}`,
                     "Content-Type": "application/json"
                 }
             }
@@ -91,7 +96,7 @@ app.post("/create-checkout", async (req, res) => {
 
         const url = response.data?.hosted_checkout_url;
 
-        if (!url) throw new Error("No checkout URL");
+        if (!url) throw new Error("No checkout URL returned from SumUp");
 
         res.json({ url });
 
@@ -105,13 +110,20 @@ app.post("/create-checkout", async (req, res) => {
 app.get("/success", async (req, res) => {
     const { orderId } = req.query;
 
-    const order = pendingOrders[orderId];
+    // FIX: fallback to DB if memory is lost
+    let order = pendingOrders[orderId];
+
+    if (!order) {
+        await db.read();
+        order = db.data.orders.find(o => o.id === orderId);
+    }
 
     if (!order) {
         return res.send("<h1>Order not found or expired</h1>");
     }
 
     try {
+        // update DB status
         await db.read();
         const dbOrder = db.data.orders.find(o => o.id === orderId);
 
@@ -136,6 +148,7 @@ app.get("/success", async (req, res) => {
             html: generateEmail(order, false)
         });
 
+        // remove from memory
         delete pendingOrders[orderId];
 
         res.send(`
