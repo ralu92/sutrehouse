@@ -18,9 +18,6 @@
                 <a href="bags.html">Bags</a>
                 <a href="accessories.html">Accessories</a>
                 <a href="collaborations.html">Collaborations</a>
-                <a href="checkout.html">
-                    Cart (<span id="cart-count">0</span>)
-                </a>
             </nav>
         </header>
 
@@ -111,32 +108,6 @@
         <footer class="site-footer">
             <p>SutreHouse · Clothing · Made for the modern wardrobe</p>
         </footer>
-
-        <script>
-
-        function updateCartCount() {
-
-            let cart = JSON.parse(localStorage.getItem("cart")) || [];
-
-            let totalItems = cart.reduce(
-                (sum, item) => sum + item.quantity,
-                0
-            );
-
-            const cartCount = document.getElementById("cart-count");
-
-            if (cartCount) {
-                cartCount.textContent = totalItems;
-            }
-
-        }
-
-        document.addEventListener(
-            "DOMContentLoaded",
-            updateCartCount
-        );
-
-        </script>
-
+        
     </body>
 </html>
