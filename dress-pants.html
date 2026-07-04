@@ -1,258 +1,164 @@
+```html
+<!DOCTYPE html>
 <html>
-    <head>
-        <title>Dress Pants · SutreHouse</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="stylesheet.css">
-    </head>
+<head>
+    <title>Dress Pants · SutreHouse</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="stylesheet.css">
+</head>
 
-    <body>
+<body>
 
-        <header class="site-header">
-            <a href="index.html">
-                <img src="sutre.jpg" class="logo" alt="SutreHouse logo">
-            </a>
+    <header class="site-header">
+        <a href="index.html">
+            <img src="sutre.jpg" class="logo" alt="SutreHouse logo">
+        </a>
 
-            <nav class="main-nav">
-                <a href="index.html">Home</a>
-                <a href="clothing.html">Clothing</a>
-                <a href="bags.html">Bags</a>
-                <a href="accessories.html">Accessories</a>
-                <a href="collaborations.html">Collaborations</a>
-                <a href="checkout.html">
-                    Cart (<span id="cart-count">0</span>)
-                </a>
-            </nav>
-        </header>
+        <nav class="main-nav">
+            <a href="index.html">Home</a>
+            <a href="clothing.html">Clothing</a>
+            <a href="bags.html">Bags</a>
+            <a href="accessories.html">Accessories</a>
+            <a href="collaborations.html">Collaborations</a>
+        </nav>
+    </header>
 
-        <main>
+    <main>
 
-            <section class="page-hero">
-                <span class="eyebrow">Tailored</span>
-                <h1>Dress Pants</h1>
-                <p>
-                    Flat-front dress pants with a crisp crease and comfortable
-                    stretch for all-day wear.
-                </p>
-            </section>
+        <section class="page-hero">
+            <span class="eyebrow">Tailored</span>
+            <h1>Dress Pants</h1>
+            <p>
+                Flat-front dress pants with a crisp crease and comfortable
+                stretch for all-day wear.
+            </p>
+        </section>
 
-            <section class="product-hero" style="max-width:900px;margin:0 auto;padding:1rem;">
+        <section class="product-hero" style="max-width:900px;margin:0 auto;padding:1rem;">
 
-                <div class="product-gallery">
+            <div class="product-gallery">
 
-  <div class="product-gallery">
+                <img
+                    id="main-image"
+                    src="denim-jeans.jpg"
+                    alt="Dress Pants"
+                    style="width:100%;height:100%;object-fit:cover;display:block;">
 
-    <img
-        id="main-image"
-        src="denim-jeans.jpg"
-        alt="Denim Jeans"
-        style="width:100%;height:100%;object-fit:cover;display:block;">
+                <div style="display:flex;gap:12px;justify-content:center;margin-top:16px;flex-wrap:wrap;">
 
-    <div style="display:flex;gap:12px;justify-content:center;margin-top:16px;flex-wrap:wrap;">
+                    <img
+                        src="denim-jeans.jpg"
+                        alt="Front View"
+                        onclick="changeImage(this)"
+                        style="width:90px;height:90px;object-fit:cover;cursor:pointer;border:2px solid #111;border-radius:8px;">
 
-        <img
-            src="denim-jeans.jpg"
-            alt="Front View"
-            onclick="changeImage(this)"
-            style="width:90px;height:90px;object-fit:cover;cursor:pointer;border:2px solid #111;border-radius:8px;">
+                    <img
+                        src="denim-jeans-back.jpg"
+                        alt="Back View"
+                        onclick="changeImage(this)"
+                        style="width:90px;height:90px;object-fit:cover;cursor:pointer;border:2px solid #ddd;border-radius:8px;">
 
-        <img
-            src="denim-jeans-back.jpg"
-            alt="Back View"
-            onclick="changeImage(this)"
-            style="width:90px;height:90px;object-fit:cover;cursor:pointer;border:2px solid #ddd;border-radius:8px;">
+                    <img
+                        src="denim-jeans-side.jpg"
+                        alt="Side View"
+                        onclick="changeImage(this)"
+                        style="width:90px;height:90px;object-fit:cover;cursor:pointer;border:2px solid #ddd;border-radius:8px;">
 
-        <img
-            src="denim-jeans-side.jpg"
-            alt="Side View"
-            onclick="changeImage(this)"
-            style="width:90px;height:90px;object-fit:cover;cursor:pointer;border:2px solid #ddd;border-radius:8px;">
-
-        <img
-            src="denim-jeans-detail.jpg"
-            alt="Detail View"
-            onclick="changeImage(this)"
-            style="width:90px;height:90px;object-fit:cover;cursor:pointer;border:2px solid #ddd;border-radius:8px;">
-
-    </div>
-
-</div>
-                <div style="padding:1rem 0;">
-
-                    <p style="color:var(--muted);margin:0 0 0.5rem;">
-                        £110.00
-                    </p>
-
-                    <p style="margin:0 0 1rem;color:#4f4b47;line-height:1.7;">
-                        Smart trousers grounded in clean tailoring and a
-                        comfortable cut — ready for work or refined evenings.
-                    </p>
-
-                    <form class="product-options" onsubmit="return false;">
-
-                        <div class="option-group">
-
-                            <span class="option-label">Fit</span>
-
-                            <label class="option-button">
-                                <input type="radio" name="fit" value="Regular" checked>
-                                Regular
-                            </label>
-
-                            <label class="option-button">
-                                <input type="radio" name="fit" value="Flared">
-                                Flared
-                            </label>
-
-                            <label class="option-button">
-                                <input type="radio" name="fit" value="Tailored">
-                                Tailored
-                            </label>
-
-                        </div>
-
-                        <p style="margin:0.75rem 0 1rem;color:#4f4b47;line-height:1.7;">
-                            Choose Tailored for custom measurements and a fit
-                            made specifically for you.
-                        </p>
-
-                        <div class="option-group">
-
-                            <span class="option-label">Size</span>
-
-                            <label class="option-button">
-                                <input type="radio" name="size" value="Small" checked>
-                                Small
-                            </label>
-
-                            <label class="option-button">
-                                <input type="radio" name="size" value="Medium">
-                                Medium
-                            </label>
-
-                            <label class="option-button">
-                                <input type="radio" name="size" value="Large">
-                                Large
-                            </label>
-
-                        </div>
-
-                        <p style="margin-top:1.5rem;">
-
-                            <button
-                                type="button"
-                                onclick="addToCart()"
-                                style="padding:0.9rem 1.2rem;border-radius:6px;background:#333;color:#fff;border:none;cursor:pointer;">
-
-                                Add to Cart
-
-                            </button>
-
-                        </p>
-
-                    </form>
-
-                    <p>
-                        <a href="clothing.html"
-                           style="color:var(--text);text-decoration:underline;">
-                            ← Back to Clothing
-                        </a>
-                    </p>
+                    <img
+                        src="denim-jeans-detail.jpg"
+                        alt="Detail View"
+                        onclick="changeImage(this)"
+                        style="width:90px;height:90px;object-fit:cover;cursor:pointer;border:2px solid #ddd;border-radius:8px;">
 
                 </div>
 
-            </section>
+            </div>
 
-        </main>
+            <div style="padding:1rem 0;">
 
-        <footer class="site-footer">
-            <p>SutreHouse · Dress Pants</p>
-        </footer>
+                <p style="color:var(--muted);margin:0 0 0.5rem;">
+                    £110.00
+                </p>
 
-        <script>
+                <p style="margin:0 0 1.5rem;color:#4f4b47;line-height:1.7;">
+                    Smart trousers grounded in clean tailoring and a
+                    comfortable cut—ready for work or refined evenings.
+                </p>
 
-            function changeImage(image) {
+                <div class="product-options">
 
-    document.getElementById("main-image").src = image.src;
+                    <div class="option-group">
 
-    document.querySelectorAll(".product-gallery img").forEach(img => {
-        if (img !== document.getElementById("main-image")) {
-            img.style.border = "2px solid #ddd";
+                        <span class="option-label">Available Fits</span>
+
+                        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;">
+
+                            <span class="option-button display-only">Regular</span>
+                            <span class="option-button display-only">Flared</span>
+                            <span class="option-button display-only">Tailored</span>
+
+                        </div>
+
+                    </div>
+
+                    <p style="margin:1rem 0;color:#4f4b47;line-height:1.7;">
+                        Tailored fit is made using custom measurements for a
+                        personalized finish.
+                    </p>
+
+                    <div class="option-group">
+
+                        <span class="option-label">Available Sizes</span>
+
+                        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;">
+
+                            <span class="option-button display-only">Small</span>
+                            <span class="option-button display-only">Medium</span>
+                            <span class="option-button display-only">Large</span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <p style="margin-top:2rem;color:var(--muted);font-size:0.95rem;">
+                    This garment is part of the SutreHouse collection and is
+                    currently displayed for viewing purposes only.
+                </p>
+
+                <p style="margin-top:2rem;">
+                    <a href="clothing.html"
+                       style="color:var(--text);text-decoration:underline;">
+                        ← Back to Clothing
+                    </a>
+                </p>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <footer class="site-footer">
+        <p>SutreHouse · Dress Pants</p>
+    </footer>
+
+    <script>
+        function changeImage(image) {
+
+            document.getElementById("main-image").src = image.src;
+
+            document.querySelectorAll(".product-gallery img").forEach(img => {
+                if (img !== document.getElementById("main-image")) {
+                    img.style.border = "2px solid #ddd";
+                }
+            });
+
+            image.style.border = "2px solid #111";
         }
-    });
+    </script>
 
-    image.style.border = "2px solid #111";
-}
-
-        function addToCart() {
-
-            const fit =
-                document.querySelector('input[name="fit"]:checked').value;
-
-            const size =
-                document.querySelector('input[name="size"]:checked').value;
-
-            let cart =
-                JSON.parse(localStorage.getItem("cart")) || [];
-
-            const existing =
-                cart.find(item =>
-                    item.name === "Dress Pants" &&
-                    item.fit === fit &&
-                    item.size === size
-                );
-
-            if (existing) {
-
-                existing.quantity++;
-
-            } else {
-
-                cart.push({
-                    name: "Dress Pants",
-                    price: 180,
-                    fit: fit,
-                    size: size,
-                    quantity: 1
-                });
-
-            }
-
-            localStorage.setItem("cart", JSON.stringify(cart));
-
-            updateCartCount();
-
-            alert("Added to cart");
-
-        }
-
-        function updateCartCount() {
-
-            let cart =
-                JSON.parse(localStorage.getItem("cart")) || [];
-
-            let totalItems =
-                cart.reduce(
-                    (sum, item) => sum + item.quantity,
-                    0
-                );
-
-            const el =
-                document.getElementById("cart-count");
-
-            if (el) {
-
-                el.textContent = totalItems;
-
-            }
-
-        }
-
-        document.addEventListener(
-            "DOMContentLoaded",
-            updateCartCount
-        );
-
-        </script>
-
-    </body>
+</body>
 </html>
+```

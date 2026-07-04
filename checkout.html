@@ -50,12 +50,12 @@
 
             <div style="max-width: 400px; margin: 0 auto; text-align: left;">
                 <label for="customerName">Full Name</label>
-                <input type="text" id="customerName" placeholder="Enter your full name" required style="padding:10px;width:100%;margin:10px 0;box-sizing: border-box;">
+                <input type="text" id="customerName" placeholder="Enter your full name" required style="padding:10px;width:100%;margin:10px 0;box-sizing:border-box;">
 
                 <label for="customer-email">Email Address</label>
-                <input type="email" id="customer-email" placeholder="Enter your email" required style="padding:10px;width:100%;margin:10px 0;box-sizing: border-box;">
+                <input type="email" id="customer-email" placeholder="Enter your email" required style="padding:10px;width:100%;margin:10px 0;box-sizing:border-box;">
 
-                <button class="checkout-btn" id="pay-btn" style="width: 100%; padding: 15px; background: #333; color: #fff; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; margin-top: 20px;">
+                <button class="checkout-btn" id="pay-btn" style="width:100%;padding:15px;background:#333;color:#fff;border:none;border-radius:5px;cursor:pointer;font-weight:bold;margin-top:20px;">
                     Pay Securely with SumUp
                 </button>
             </div>
@@ -63,9 +63,7 @@
     </main>
 
     <script>
-        // --- CONFIGURATION ---
-        // IMPORTANT: Update this to your actual backend URL
-        const BACKEND_URL = "https://sutrehouse-backend.onrender.com"; 
+        const BACKEND_URL = "https://sutrehouse-backend.onrender.com";
 
         let cart = JSON.parse(localStorage.getItem("cart") || "[]");
         let appliedPromo = null;
@@ -75,13 +73,24 @@
             localStorage.setItem("cart", JSON.stringify(cart));
         }
 
+        // Returns the final discounted total as a number
+        function calcFinalTotal() {
+            const raw = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+            if (!appliedPromo) return raw;
+            if (appliedPromo.type === "PERCENT") {
+                return Math.max(0, raw - (raw * appliedPromo.value) / 100);
+            }
+            if (appliedPromo.type === "FIXED") {
+                return Math.max(0, raw - appliedPromo.value);
+            }
+            return raw;
+        }
+
         function renderCart() {
             const container = document.getElementById("cart-container");
             const totalElement = document.getElementById("total");
-            const errorBox = document.getElementById("error-box");
-            
+
             container.innerHTML = "";
-            let total = 0;
 
             if (cart.length === 0) {
                 container.innerHTML = "<p>Your cart is empty.</p>";
@@ -90,8 +99,11 @@
                 return;
             }
 
+            document.getElementById("pay-btn").disabled = false;
+
+            const rawTotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+
             cart.forEach((item, index) => {
-                total += item.price * item.quantity;
                 const div = document.createElement("div");
                 div.style.borderBottom = "1px solid #eee";
                 div.style.padding = "10px 0";
@@ -102,40 +114,41 @@
                         <button onclick="changeQty(${index}, -1)">-</button>
                         <span style="margin: 0 10px;">${item.quantity}</span>
                         <button onclick="changeQty(${index}, 1)">+</button>
-                        <button onclick="removeItem(${index})" style="margin-left: 20px; color: red; border: none; background: none; cursor: pointer;">Remove</button>
+                        <button onclick="removeItem(${index})" style="margin-left:20px;color:red;border:none;background:none;cursor:pointer;">Remove</button>
                     </div>
                 `;
                 container.appendChild(div);
             });
 
-            let finalTotal = total;
             if (appliedPromo) {
+                let discount = 0;
                 if (appliedPromo.type === "PERCENT") {
-                    const discount = (total * appliedPromo.value) / 100;
-                    finalTotal = total - discount;
-                    document.getElementById("discount-amount").textContent = discount.toFixed(2);
+                    discount = (rawTotal * appliedPromo.value) / 100;
                 } else if (appliedPromo.type === "FIXED") {
-                    finalTotal = Math.max(0, total - appliedPromo.value);
-                    document.getElementById("discount-amount").textContent = appliedPromo.value.toFixed(2);
+                    discount = Math.min(appliedPromo.value, rawTotal);
                 }
+                document.getElementById("discount-amount").textContent = discount.toFixed(2);
                 document.getElementById("discount-display").style.display = "block";
             } else {
                 document.getElementById("discount-display").style.display = "none";
             }
 
-            totalElement.textContent = Math.max(0, finalTotal).toFixed(2);
+            totalElement.textContent = calcFinalTotal().toFixed(2);
             saveCart();
         }
 
-        // --- PROMO CODE LOGIC ---
+        // --- PROMO CODE ---
         document.getElementById("apply-promo-btn").addEventListener("click", async () => {
             const codeInput = document.getElementById("promoCode");
-            const code = codeInput.value.trim();
+            const code = codeInput.value.trim().toUpperCase();
             const msg = document.getElementById("promo-message");
             const btn = document.getElementById("apply-promo-btn");
 
             if (!code) return;
 
+            // Reset message state before new attempt
+            msg.style.display = "none";
+            msg.textContent = "";
             btn.disabled = true;
             btn.textContent = "...";
 
@@ -149,13 +162,13 @@
                 const data = await response.json();
 
                 if (response.ok && data.valid) {
-                    appliedPromo = { code, ...data };
-                    msg.textContent = `Success! ${code} applied.`;
+                    appliedPromo = { code, type: data.type, value: data.value };
+                    msg.textContent = `✓ Code "${code}" applied.`;
                     msg.style.color = "#4CAF50";
                     msg.style.display = "block";
                     renderCart();
                 } else {
-                    throw new Error(data.message || "Invalid code");
+                    throw new Error(data.message || "Invalid promo code.");
                 }
             } catch (err) {
                 appliedPromo = null;
@@ -187,6 +200,10 @@
             window.scrollTo(0, 0);
         }
 
+        function isValidEmail(email) {
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        }
+
         document.getElementById("pay-btn").addEventListener("click", async () => {
             const btn = document.getElementById("pay-btn");
             const name = document.getElementById("customerName").value.trim();
@@ -195,8 +212,13 @@
 
             errorBox.style.display = "none";
 
-            if (!name || !email) {
-                showError("Please enter your name and email address.");
+            if (!name) {
+                showError("Please enter your full name.");
+                return;
+            }
+
+            if (!email || !isValidEmail(email)) {
+                showError("Please enter a valid email address.");
                 return;
             }
 
@@ -205,10 +227,9 @@
                 return;
             }
 
-            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-            
-            // SumUp Minimum Amount Check (usually 1.00 GBP)
-            if (total < 1.00) {
+            const finalTotal = calcFinalTotal();
+
+            if (finalTotal < 1.00) {
                 showError("Minimum order amount is £1.00.");
                 return;
             }
@@ -221,29 +242,28 @@
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
-                        amount: total.toFixed(2),
-                        customerName: name,
-                        customerEmail: email,
-                        items: cart,
-                        promoCode: appliedPromo ? appliedPromo.code : null
+                        // Send as a number, not a string — backend validates typeof amount === "number"
+                        amount: parseFloat(finalTotal.toFixed(2)),
+                        email
                     })
                 });
 
                 const data = await response.json();
 
                 if (!response.ok) {
-                    throw new Error(data.details || data.error || "Server error");
+                    throw new Error(data.error || "Server error. Please try again.");
                 }
 
-                if (data.url) {
-                    window.location.href = data.url;
+                // Backend returns checkoutUrl — redirect to SumUp hosted page
+                if (data.checkoutUrl) {
+                    window.location.href = data.checkoutUrl;
                 } else {
-                    throw new Error("No payment URL received from SumUp.");
+                    throw new Error("No payment URL received. Please try again.");
                 }
 
             } catch (err) {
-                console.error("Checkout Error:", err);
-                showError(`Checkout not available: ${err.message}`);
+                console.error("Checkout error:", err);
+                showError(`Checkout failed: ${err.message}`);
                 btn.disabled = false;
                 btn.textContent = "Pay Securely with SumUp";
             }
