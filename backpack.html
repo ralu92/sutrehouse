@@ -1,0 +1,130 @@
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Minimalist Backpack · SutreHouse</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="stylesheet.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <a href="index.html">
+            <img src="sutre.jpg" class="logo" alt="SutreHouse logo">
+        </a>
+
+        <nav class="main-nav">
+            <a href="index.html">Home</a>
+            <a href="clothing.html">Clothing</a>
+            <a href="bags.html">Bags</a>
+            <a href="accessories.html">Accessories</a>
+            <a href="collaborations.html">Collaborations</a>
+        </nav>
+    </header>
+
+    <main>
+
+        <section class="page-hero">
+            <span class="eyebrow">Everyday</span>
+            <h1>Minimalist Backpack</h1>
+            <p>
+                A versatile everyday carry crafted from heavy waxed canvas —
+                with purposeful pockets and reinforced structure for daily
+                reliability.
+            </p>
+        </section>
+
+        <section class="product-hero" style="max-width:900px;margin:0 auto;padding:1rem;">
+
+            <div class="product-gallery">
+
+                <img
+                    id="main-image"
+                    src="denim-jeans.jpg"
+                    alt="Structured Tote"
+                    style="width:100%;height:100%;object-fit:cover;display:block;">
+
+                <div style="display:flex;gap:12px;justify-content:center;margin-top:16px;flex-wrap:wrap;">
+
+                    <img
+                        src="denim-jeans.jpg"
+                        alt="Front View"
+                        onclick="changeImage(this)"
+                        style="width:90px;height:90px;object-fit:cover;cursor:pointer;border:2px solid #111;border-radius:8px;">
+
+                    <img
+                        src="denim-jeans-back.jpg"
+                        alt="Back View"
+                        onclick="changeImage(this)"
+                        style="width:90px;height:90px;object-fit:cover;cursor:pointer;border:2px solid #ddd;border-radius:8px;">
+
+                    <img
+                        src="denim-jeans-side.jpg"
+                        alt="Side View"
+                        onclick="changeImage(this)"
+                        style="width:90px;height:90px;object-fit:cover;cursor:pointer;border:2px solid #ddd;border-radius:8px;">
+
+                    <img
+                        src="denim-jeans-detail.jpg"
+                        alt="Detail View"
+                        onclick="changeImage(this)"
+                        style="width:90px;height:90px;object-fit:cover;cursor:pointer;border:2px solid #ddd;border-radius:8px;">
+
+                </div>
+
+            </div>
+
+            <div style="padding:1rem 0;">
+
+                <p style="color:var(--muted);margin:0 0 0.5rem;">
+                    $215.00
+                </p>
+
+                <p style="margin:0 0 1.5rem;color:#4f4b47;line-height:1.7;">
+                    Built from heavy waxed canvas with thoughtful interior
+                    organization. The structured profile accommodates daily
+                    essentials while maintaining a refined silhouette, making
+                    it an essential piece for the modern wardrobe.
+                </p>
+
+                <p style="margin-top:2rem;color:var(--muted);font-size:0.95rem;">
+                    This piece is part of the SutreHouse collection and is
+                    currently displayed for viewing purposes only.
+                </p>
+
+                <p style="margin-top:2rem;">
+                    <a href="bags.html"
+                       style="color:var(--text);text-decoration:underline;">
+                        ← Back to Bags
+                    </a>
+                </p>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <footer class="site-footer">
+        <p>SutreHouse · Structured Tote</p>
+    </footer>
+
+    <script>
+        function changeImage(image) {
+
+            document.getElementById("main-image").src = image.src;
+
+            document.querySelectorAll(".product-gallery img").forEach(img => {
+                if (img !== document.getElementById("main-image")) {
+                    img.style.border = "2px solid #ddd";
+                }
+            });
+
+            image.style.border = "2px solid #111";
+        }
+    </script>
+
+</body>
+</html>
+```
