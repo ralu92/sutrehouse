@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Denim Jacket · SutreHouse</title>
+    <title>Gakouren · SutreHouse</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="stylesheet.css">
 </head>
@@ -26,11 +26,12 @@
     <main>
 
         <section class="page-hero">
-            <span class="eyebrow">Denim</span>
-            <h1>Signature Denim Jacket</h1>
+            <span class="eyebrow">Tailored</span>
+            <h1>Gakouren</h1>
             <p>
-                A signature design — structured denim with refined seaming,
-                artisanal finishes, and enduring hardware.
+                A modern interpretation of the traditional Japanese gakuren —
+                relaxed yet refined, with meticulous tailoring and quiet,
+                modern presence.
             </p>
         </section>
 
@@ -40,14 +41,14 @@
 
                 <img
                     id="main-image"
-                    src="denim-jacket.jpg"
-                    alt="Signature Denim Jacket"
+                    src="denim-jeans.jpg"
+                    alt="Signature Suit"
                     style="width:100%;height:100%;object-fit:cover;display:block;">
 
                 <div style="display:flex;gap:12px;justify-content:center;margin-top:16px;flex-wrap:wrap;">
 
                     <img
-                        src="denim-jacket.jpg"
+                        src="denim-jeans.jpg"
                         alt="Front View"
                         onclick="changeImage(this)"
                         style="width:90px;height:90px;object-fit:cover;cursor:pointer;border:2px solid #111;border-radius:8px;">
@@ -77,15 +78,34 @@
             <div style="padding:1rem 0;">
 
                 <p style="color:var(--muted);margin:0 0 0.5rem;">
-                    £165.00
+                    £295.00
                 </p>
 
                 <p style="margin:0 0 1.5rem;color:#4f4b47;line-height:1.7;">
-                    A signature design with balanced proportions and reinforced
-                    stitching, finished with considered hardware for longevity.
+                    A signature suit that draws from Japanese gakuren
+                    structure—precise lapels, soft tailored shoulders,
+                    and a luxurious layered silhouette.
                 </p>
 
                 <div class="product-options">
+
+                    <div class="option-group">
+
+                        <span class="option-label">Available Services</span>
+
+                        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;">
+
+                            <span class="option-button display-only">Ready-to-wear</span>
+                            <span class="option-button display-only">Tailored</span>
+
+                        </div>
+
+                    </div>
+
+                    <p style="margin:1rem 0;color:#4f4b47;line-height:1.7;">
+                        Tailored garments are individually made using your
+                        measurements for a personalized fit.
+                    </p>
 
                     <div class="option-group">
 
@@ -94,13 +114,13 @@
                         <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;">
 
                             <span class="option-button display-only">Regular</span>
-                            <span class="option-button display-only">Oversized</span>
+                            <span class="option-button display-only">Flared</span>
 
                         </div>
 
-                    </div>
+                    </div>                    
 
-                    <div class="option-group" style="margin-top:1.5rem;">
+                    <div class="option-group">
 
                         <span class="option-label">Available Sizes</span>
 
@@ -122,7 +142,8 @@
                 </p>
 
                 <p style="margin-top:2rem;">
-                    <a href="clothing.html" style="color:var(--text);text-decoration:underline;">
+                    <a href="clothing.html"
+                       style="color:var(--text);text-decoration:underline;">
                         ← Back to Clothing
                     </a>
                 </p>
@@ -134,11 +155,12 @@
     </main>
 
     <footer class="site-footer">
-        <p>SutreHouse · Denim Jacket</p>
+        <p>SutreHouse · Signature Suit</p>
     </footer>
 
     <script>
         function changeImage(image) {
+
             document.getElementById("main-image").src = image.src;
 
             document.querySelectorAll(".product-gallery img").forEach(img => {
