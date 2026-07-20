@@ -106,5 +106,20 @@
         <p>SutreHouse · Akpa 50</p>
     </footer>
 
+        <script>
+        function changeImage(image) {
+
+            document.getElementById("main-image").src = image.src;
+
+            document.querySelectorAll(".product-gallery img").forEach(img => {
+                if (img !== document.getElementById("main-image")) {
+                    img.style.border = "2px solid #ddd";
+                }
+            });
+
+            image.style.border = "2px solid #111";
+        }
+    </script>
+
 </body>
 </html>

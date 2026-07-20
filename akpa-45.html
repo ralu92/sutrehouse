@@ -45,25 +45,25 @@
                 <div style="display:flex;gap:12px;justify-content:center;margin-top:16px;flex-wrap:wrap;">
 
                     <img
-                        src="denim-jeans.jpg"
+                        src="pics/a45a.jpg"
                         alt="Front View"
                         onclick="changeImage(this)"
                         style="width:90px;height:90px;object-fit:cover;cursor:pointer;border:2px solid #111;border-radius:8px;">
 
                     <img
-                        src="denim-jeans-back.jpg"
+                        src="pics/a45b.jpg"
                         alt="Back View"
                         onclick="changeImage(this)"
                         style="width:90px;height:90px;object-fit:cover;cursor:pointer;border:2px solid #ddd;border-radius:8px;">
 
                     <img
-                        src="denim-jeans-side.jpg"
+                        src="pics/a45c.jpg"
                         alt="Side View"
                         onclick="changeImage(this)"
                         style="width:90px;height:90px;object-fit:cover;cursor:pointer;border:2px solid #ddd;border-radius:8px;">
 
                     <img
-                        src="denim-jeans-detail.jpg"
+                        src="pics/a45d.jpg"
                         alt="Detail View"
                         onclick="changeImage(this)"
                         style="width:90px;height:90px;object-fit:cover;cursor:pointer;border:2px solid #ddd;border-radius:8px;">
@@ -106,6 +106,21 @@
     <footer class="site-footer">
         <p>SutreHouse · Akpa 45</p>
     </footer>
+
+    <script>
+        function changeImage(image) {
+
+            document.getElementById("main-image").src = image.src;
+
+            document.querySelectorAll(".product-gallery img").forEach(img => {
+                if (img !== document.getElementById("main-image")) {
+                    img.style.border = "2px solid #ddd";
+                }
+            });
+
+            image.style.border = "2px solid #111";
+        }
+    </script>
 
 </body>
 </html>
