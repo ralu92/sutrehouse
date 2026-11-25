@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Akpa Aka 50 Leather · SutreHouse</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="stylesheet.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <a href="index.html">
+            <img src="sutre.jpg" class="logo" alt="SutreHouse logo">
+        </a>
+
+        <nav class="main-nav">
+            <a href="index.html">Home</a>
+            <a href="catalog.html">Catalog</a>
+            <a href="collaborations.html">Collaborations</a>
+        </nav>
+    </header>
+
+    <main>
+
+        <section class="page-hero">
+            <span class="eyebrow">Handbag</span>
+            <h1>Akpa Aka 50</h1>
+            <p>
+                A structured leather handbag with a timeless silhouette, polished details, 
+                and a thoughtfully organized interior—made to bring effortless style to everyday outings.
+            </p>
+        </section>
+
+        <section class="product-hero" style="max-width:900px;margin:0 auto;padding:1rem;">
+
+            <div class="product-gallery">
+
+                <img
+                    id="main-image"
+                    src="pics/a45a.jpg"
+                    alt="Denim Jeans"
+                    style="width:100%;object-fit:cover;display:block;">
+
+                <div style="display:flex;gap:12px;justify-content:center;margin-top:16px;flex-wrap:wrap;">
+
+                    <img
+                        src="pics/a45a.jpg"
+                        alt="Front View"
+                        onclick="changeImage(this)"
+                        style="width:90px;height:90px;object-fit:cover;cursor:pointer;border:2px solid #111;border-radius:8px;">
+
+                    <img
+                        src="pics/a45b.jpg"
+                        alt="Back View"
+                        onclick="changeImage(this)"
+                        style="width:90px;height:90px;object-fit:cover;cursor:pointer;border:2px solid #ddd;border-radius:8px;">
+
+                    <img
+                        src="pics/a45c.jpg"
+                        alt="Side View"
+                        onclick="changeImage(this)"
+                        style="width:90px;height:90px;object-fit:cover;cursor:pointer;border:2px solid #ddd;border-radius:8px;">
+
+                    <img
+                        src="pics/a45d.jpg"
+                        alt="Detail View"
+                        onclick="changeImage(this)"
+                        style="width:90px;height:90px;object-fit:cover;cursor:pointer;border:2px solid #ddd;border-radius:8px;">
+
+                </div>
+
+            </div>
+
+            <div style="padding:1rem 0;">
+
+                <p style="color:var(--muted);margin:0 0 0.5rem;">
+                    £150.00
+                </p>
+
+                <p style="margin:0 0 1.5rem;color:#4f4b47;line-height:1.7;">
+                    Discover structured, statement-making handbags designed for everyday confidence.
+                    Made from leather with polished details and a timeless silhouette, 
+                    this collection brings a touch of luxury to your wardrobe.
+                </p>
+
+                <p style="margin-top:2rem;color:var(--muted);font-size:0.95rem;">
+                    This piece is part of the SutreHouse collection and is
+                    currently displayed for viewing purposes only.
+                </p>
+
+                    <p style="margin:0 0 1.5rem;color:#4f4b47;line-height:1.7;">
+                    Messages regarding pricing, and ordering can be sent to
+                    <a href=https://www.instagram.com/sutrehouse/
+                       style="color:var(--text);text-decoration:underline;">
+                        @sutrehouse
+                    </a></p>
+
+                <p style="margin-top:2rem;">
+                    <a href="catalog.html"
+                       style="color:var(--text);text-decoration:underline;">
+                        ← Back to Catalog
+                    </a>
+                </p>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <footer class="site-footer">
+        <p>SutreHouse · Akpa Aka 50 Leather</p>
+    </footer>
+
+    <script>
+        function changeImage(image) {
+
+            document.getElementById("main-image").src = image.src;
+
+            document.querySelectorAll(".product-gallery img").forEach(img => {
+                if (img !== document.getElementById("main-image")) {
+                    img.style.border = "2px solid #ddd";
+                }
+            });
+
+            image.style.border = "2px solid #111";
+        }
+    </script>
+
+</body>
+</html>
