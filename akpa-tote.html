@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Akpa Tote Leather· SutreHouse</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="stylesheet.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <a href="index.html">
+            <img src="sutre.jpg" class="logo" alt="SutreHouse logo">
+        </a>
+
+        <nav class="main-nav">
+            <a href="index.html">Home</a>
+            <a href="catalog.html">Catalog</a>
+            <a href="collaborations.html">Collaborations</a>
+        </nav>
+    </header>
+
+    <main>
+
+        <section class="page-hero">
+            <span class="eyebrow">Tote</span>
+            <h1>Akpa Tote</h1>
+            <p>
+                A supple leather tote with a generous interior and elegant 
+                finish—room for your essentials, with a little everyday luxury.
+            </p>
+        </section>
+
+        <section class="product-hero" style="max-width:900px;margin:0 auto;padding:1rem;">
+
+            <div class="product-gallery">
+
+                <img
+                    id="main-image"
+                    src="pics/a50a.jpg"
+                    alt="Akpa 50 tote"
+                    style="width:100%;object-fit:cover;display:block;">
+
+                <div style="display:flex;gap:12px;justify-content:center;margin-top:16px;flex-wrap:wrap;">
+
+                    <img
+                        src="pics/a50a.jpg"
+                        alt="Front View"
+                        onclick="changeImage(this)"
+                        style="width:90px;height:90px;object-fit:cover;cursor:pointer;border:2px solid #111;border-radius:8px;">
+
+                    <img
+                        src="pics/a50b.jpg"
+                        alt="Back View"
+                        onclick="changeImage(this)"
+                        style="width:90px;height:90px;object-fit:cover;cursor:pointer;border:2px solid #ddd;border-radius:8px;">
+
+                    <img
+                        src="pics/a50c.jpg"
+                        alt="Side View"
+                        onclick="changeImage(this)"
+                        style="width:90px;height:90px;object-fit:cover;cursor:pointer;border:2px solid #ddd;border-radius:8px;">
+
+                    <img
+                        src="pics/a50d.jpg"
+                        alt="Detail View"
+                        onclick="changeImage(this)"
+                        style="width:90px;height:90px;object-fit:cover;cursor:pointer;border:2px solid #ddd;border-radius:8px;">
+
+                </div>
+
+            </div>
+
+            <div style="padding:1rem 0;">
+
+                <p style="color:var(--muted);margin:0 0 0.5rem;">
+                    £130.00
+                </p>
+
+                <p style="margin:0 0 1.5rem;color:#4f4b47;line-height:1.7;">
+                    Crafted from supple, buttery-soft leather, this spacious tote pairs clean lines
+                     with refined detailing for an effortlessly elevated look. Its generous interior keeps 
+                     everyday essentials close at hand, while the polished silhouette moves seamlessly 
+                     from weekday routines to weekend plans. A timeless statement piece designed for understated luxury.
+                </p>
+
+                <p style="margin-top:2rem;color:var(--muted);font-size:0.95rem;">
+                    This piece is part of the SutreHouse collection and is
+                    currently displayed for viewing purposes only.
+                </p>
+
+                <p style="margin:0 0 1.5rem;color:#4f4b47;line-height:1.7;">
+                    Messages regarding pricing, and ordering can be sent to
+                    <a href=https://www.instagram.com/sutrehouse/
+                       style="color:var(--text);text-decoration:underline;">
+                        @sutrehouse
+                    </a></p>
+                    
+                <p style="margin-top:2rem;">
+                    <a href="catalog.html"
+                       style="color:var(--text);text-decoration:underline;">
+                        ← Back to Catalog
+                    </a>
+                </p>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <footer class="site-footer">
+        <p>SutreHouse · Akpa Tote Leather</p>
+    </footer>
+
+        <script>
+        function changeImage(image) {
+
+            document.getElementById("main-image").src = image.src;
+
+            document.querySelectorAll(".product-gallery img").forEach(img => {
+                if (img !== document.getElementById("main-image")) {
+                    img.style.border = "2px solid #ddd";
+                }
+            });
+
+            image.style.border = "2px solid #111";
+        }
+    </script>
+
+</body>
+</html>
